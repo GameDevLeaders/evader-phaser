@@ -1,4 +1,4 @@
-var play = function(game) { };
+var play = function(game) {};
 
 var map = [
     [0,0,1],
@@ -20,6 +20,7 @@ play.prototype = {
     preload: function () {
         this.game.load.image('enemy', 'assets/enemy.png');
         this.game.load.image('ship', 'assets/ship.png');
+        this.game.load.image('heart', 'assets/heart.png');
     },
     create: create,
     update: update,
@@ -27,13 +28,26 @@ play.prototype = {
 };
 
 function create() {
-  this.game.physics.startSystem(Phaser.Physics.ARCADE);
-  enemyGroup = this.game.add.group();
-  enemyGroup.enableBody = true;
-  cursors = this.game.input.keyboard.createCursorKeys();
-  createPlayer(this.game);
-  createEnemies(this.game);
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    this.lives = 3;
+
+    enemyGroup = this.game.add.group();
+    enemyGroup.enableBody = true;
+    cursors = this.game.input.keyboard.createCursorKeys();
+    createPlayer(this.game);
+    createEnemies(this.game);
+
+    this.hearts = this.game.add.group();
+    this.game.add.text(this.game.world.width - 110, 10, 'Lives : ', { font: '16px Arial', fill: '#fff' });
+    for (var i = 0; i < 3; i++)
+    {
+        var heart = this.hearts.create(this.game.world.width - 100 + (30 * i), 45, 'heart');
+        heart.anchor.setTo(0.5, 0.5);
+        heart.alpha = 0.6;
+    }
 }
+
 function createPlayer(game){
     playerGroup = game.add.group();
     playerGroup.enableBody = true;
@@ -48,6 +62,7 @@ function createPlayer(game){
     playerHBox.body.velocity.y = 0;
     playerVBox.body.velocity.y = 0;
 }
+
 function moveLeft(){
     var players = playerGroup.children, newX = 0;
     for (var i = 0; i < players.length; i++) {
@@ -97,17 +112,26 @@ function checkInputs(game){
     }
 }
 function checkCollisions(game){
-    game.physics.arcade.overlap(playerGroup, enemyGroup, function (player, enemy,c) {
-      console.log('COLLIDES with ' + player.name);
-//      this.game.paused = true;
-//      enemy.destroy();
-      game.state.start('gameOver');
+    var currentState = this;
+    game.physics.arcade.overlap(playerGroup, enemyGroup, function (player, enemy, c) {
+        console.log('COLLIDES with ' + player.name);
+        enemy.kill();
+        currentState.lives--;
+        if(currentState.lives == 0) {
+            game.state.start('gameOver');
+        }
+
+        var heart = currentState.hearts.getFirstAlive();
+        if (heart)
+        {
+            heart.kill();
+        }
     });
 }
 function update() {
     updatePlayer(this.game);
     updateEnemies(this.game);
-    checkCollisions(this.game);
+    checkCollisions.call(this, this.game);
     checkInputs(this.game);
 }
 
