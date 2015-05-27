@@ -10,6 +10,7 @@ function gameOverState() {
     };
 
     function create() {
+        console.log(this.play);
         var style = { font: "15px Arial", fill: "#00ff00", align: "center" };
         var text = this.game.add.text(
             this.game.world.centerX,
