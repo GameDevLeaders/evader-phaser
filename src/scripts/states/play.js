@@ -1,5 +1,5 @@
 var play = function(game) {};
-
+var Princess = require('../entities/princess');
 var map = [
     [0,0,1],
     [0,1,0],
@@ -9,24 +9,31 @@ var map = [
     [1,1,0]
 ];
 
-var playerGroup,
-    cursors,
+var cursors,
     enemyGroup,
     enemy,
-    turbo = 1, 
-    step = 6;
+    princess;
 
 play.prototype = {
     preload: function () {
         this.game.load.image('enemy', 'assets/enemy.png');
-        this.game.load.image('ship', 'assets/ship.png');
+        this.game.load.image('princess', 'assets/princess.png');
         this.game.load.image('heart', 'assets/heart.png');
     },
     create: create,
     update: update,
-    render: render
+    render: render,
+    //princess : null,
+    createPlayer: createPlayer,
+    createEnemies: createEnemies,
+    checkCollisions: checkCollisions,
+    updateEnemies: updateEnemies,
+    checkInputs: checkInputs,
+    score: 0,
 };
-
+function setScoreText(){
+    this.scoreText.text = 'Score: ' + this.score;
+}
 function create() {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -35,10 +42,11 @@ function create() {
     enemyGroup = this.game.add.group();
     enemyGroup.enableBody = true;
     cursors = this.game.input.keyboard.createCursorKeys();
-    createPlayer(this.game);
-    createEnemies(this.game);
+    this.createPlayer();
+    this.createEnemies();
 
     this.hearts = this.game.add.group();
+    this.scoreText = this.game.add.text(10, 10, 'Score: ' + this.score, { font: '16px Arial', fill: '#fff' });
     this.game.add.text(this.game.world.width - 110, 10, 'Lives : ', { font: '16px Arial', fill: '#fff' });
     for (var i = 0; i < 3; i++)
     {
@@ -48,72 +56,44 @@ function create() {
     }
 }
 
-function createPlayer(game){
-    playerGroup = game.add.group();
-    playerGroup.enableBody = true;
-    var x = 50, y = game.height - 100,
-        playerHBox = playerGroup.create(x, y, 'ship'),
-        playerVBox = playerGroup.create(x, y);
-    playerHBox.body.setSize(95,30,2,35);
-    playerVBox.body.setSize(30,75,35,0);
-    playerHBox.name = 'Wings';
-    playerVBox.name = 'Body';
-    
-    playerHBox.body.velocity.y = 0;
-    playerVBox.body.velocity.y = 0;
+function createPlayer(){
+    var game = this.game,
+        x = 50, 
+        y = game.height - 100;
+    princess = new Princess(game);
+    princess.setPosition(x, y);
+    this.score = 0;
 }
-
-function moveLeft(){
-    var players = playerGroup.children, newX = 0;
-    for (var i = 0; i < players.length; i++) {
-        newX = players[i].body.x - step*turbo
-        if(newX >= 0){
-            players[i].body.x = newX;
-        }else{
-            break;
-        }
-    }
-}
-function moveRight(game){
-    var players = playerGroup.children, newX = 0;
-    for (var i = 0; i < players.length; i++) {
-        newX = players[i].body.x + step*turbo
-        if(newX + players[i].body.width <= game.width){
-            players[i].body.x = newX;
-        }else{
-            break;
-        }
-    }
-}
-function updatePlayer(game){
-}
-function updateEnemies(game){
-    var enemies = enemyGroup.children;
+function updateEnemies(){
+    var game = this.game, enemies = enemyGroup.children;
     for (var i = 0; i < enemies.length; i++) {
-      enemies[i].body.velocity.y = 100 * turbo;
+      enemies[i].body.velocity.y = 100 * this.game.turbo;
       if (enemies[i].body.y > game.height) {
-        enemyGroup.remove(enemies[i], true, true);
+          this.score++;
+          setScoreText.call(this);
+          enemyGroup.remove(enemies[i], true, true);
       }
     }
     var lastEnemy = enemyGroup.children[enemyGroup.children.length-1];
     if (lastEnemy.body.y > lastEnemy.body.height * 2.5) {
-      createEnemies(game);
+      this.createEnemies();
     }
 }
-function checkInputs(game){
-    turbo = 1;
+function checkInputs(){
+    var game = this.game;
+    this.game.turbo = 1;
     if (cursors.up.isDown) {
-        turbo = 4;
+        this.game.turbo = 4;
     }
     if (cursors.left.isDown) {
-        moveLeft(game);
+        princess.moveLeft(game);
     } else if (cursors.right.isDown) {
-        moveRight(game);
+        princess.moveRight(game);
     }
 }
-function checkCollisions(game){
-    var currentState = this;
-    game.physics.arcade.overlap(playerGroup, enemyGroup, function (player, enemy, c) {
+function checkCollisions(){
+    var currentState = this, game = this.game;
+    game.physics.arcade.overlap(princess.getBody(), enemyGroup, function (player, enemy, c) {
         console.log('COLLIDES with ' + player.name);
         enemy.kill();
         currentState.lives--;
@@ -129,21 +109,20 @@ function checkCollisions(game){
     });
 }
 function update() {
-    updatePlayer(this.game);
-    updateEnemies(this.game);
-    checkCollisions.call(this, this.game);
-    checkInputs(this.game);
+    this.updateEnemies();
+    this.checkCollisions.call(this, this.game);
+    this.checkInputs();
 }
 
 function render(){
     enemyGroup.forEachAlive(renderGroup, this);
-    playerGroup.forEachAlive(renderGroup, this);
+    princess.render();
 }
 function renderGroup(member) {
     this.game.debug.body(member);
 }
-function createEnemies(game) {
-    var line = map[getRandom(0, map.length-1)];
+function createEnemies() {
+    var game = this.game, line = map[getRandom(0, map.length-1)];
     for (var i = 0; i < line.length; i++) {
         if (line[i] === 0) {
             continue;
