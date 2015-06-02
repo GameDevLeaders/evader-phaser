@@ -1,6 +1,7 @@
 var step = 6;
 var Princess = function(game) {
     var princess = {
+            fuel: 100,
             create: create,
             setPosition: setPosition,
 //            update: update,
@@ -9,7 +10,6 @@ var Princess = function(game) {
             moveLeft: moveLeft,
             moveRight: moveRight,
             playerGroup: null,
-//            updatePlayer: updatePlayer,
             getBody: getBody,
             game: game,
         };
@@ -72,7 +72,7 @@ function moveGroupRight(){
     mouseRightX = mousePart.body.x + mousePart.body.width; //mouse right x
     newX = mouseRightX + diff;
 
-    if(mouseRightX > this.game.width){
+    if(mouseRightX + diff >= this.game.width){
         //If moving out of the screen, stay at max width.
         diff = this.game.width - mouseRightX;
         return;
