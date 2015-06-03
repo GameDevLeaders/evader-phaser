@@ -6,18 +6,29 @@ gameOver.prototype = gameOverState();
 
 function gameOverState() {
     return {
-        create: create
+        create: create,
+        init: init,
+        scoreText: null,
     };
-
+    function init(state){
+        this.score = state.score;
+    }
     function create() {
-        var style = { font: "15px Arial", fill: "#00ff00", align: "center" };
+        console.log(this.game.add.text);
+        var style = { font: "15px Arial", fill: "#00ff00", align: "center" }, scoreText;
         var text = this.game.add.text(
             this.game.world.centerX,
-            this.game.world.centerY,
+            this.game.world.centerY + 20,
             "Game Over\nClick to start again...",
             style
         );
-
+        scoreText = "Score: " + this.score;
+        this.scoreText = this.game.add.text(
+                (this.game.width/2) - (scoreText.length*3),
+                this.game.world.centerY - 25,
+                scoreText,
+                style
+            );
         text.anchor.set(0.5);
         this.input.onDown.add(startGame, this);
     }

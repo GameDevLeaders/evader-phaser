@@ -56,11 +56,11 @@ function createCheeses(){
     game.physics.arcade.enable(cheese);
     game.physics.arcade.enable(rottenCheese);
     cheese.name = 'fuel-up';
-    cheese.fuel = 10;
+    cheese.fuel = 15;
     cheese.body.velocity.y = 0;
     rottenCheese.body.velocity.y = 0;
     rottenCheese.name = 'fuel-down';
-    rottenCheese.fuel = -10;
+    rottenCheese.fuel = -7;
 
     this.activeCheese = null;
 }
@@ -84,7 +84,6 @@ function create() {
         heart.anchor.setTo(0.5, 0.5);
         heart.alpha = 0.6;
     }
-    console.log('Create called');
 }
 
 function createPlayer(){
@@ -122,14 +121,17 @@ function checkInputs(){
         princess.moveRight(game);
     }
 }
+function gameOver(){
+    this.game.state.start('gameOver', true, false, this);
+    return;
+}
 function checkCollisions(){
     var currentState = this, game = this.game;
     game.physics.arcade.overlap(princess.getBody(), enemyGroup, function (player, enemy, c) {
-        console.log('COLLIDES with ' + player.name);
         enemy.kill();
         currentState.lives--;
         if(currentState.lives == 0) {
-            game.state.start('gameOver');
+            gameOver.call(currentState);
             return;
         }
         var heart = currentState.hearts.getFirstAlive();
@@ -140,7 +142,6 @@ function checkCollisions(){
     });
 
     game.physics.arcade.overlap(princess.getBody(), this.activeCheese, function (cheese, part, c) {
-        console.log(part.name, cheese.name);
         princess.fuel += cheese.fuel;
         resetCheese.call(currentState, cheese);
         setFuelText.call(currentState);
@@ -164,7 +165,6 @@ function updatePlayer(){
     setFuelText.call(this);
 }
 function resetCheese(currentCheese){
-    console.log('resetCheese');
     currentCheese.y = -100 - 10 * Math.floor( Math.random() * 10 );
     currentCheese.x = Math.floor( Math.random() * this.game.width );
     currentCheese.body.velocity.y = 0;
@@ -173,7 +173,7 @@ function resetCheese(currentCheese){
 function updateCheeses(){
     var currentCheese = this.activeCheese, game = this.game, nextCheese = 0, newX;
     if(princess.fuel <= 0) {
-        game.state.start('gameOver');
+        gameOver.call(this);
         return;
     }
     if(currentCheese){
@@ -188,9 +188,8 @@ function updateCheeses(){
             resetCheese.call(this, currentCheese);
         }
     }else{
-        nextCheese = Math.floor( Math.random() * 2 );
-        console.log(nextCheese);
-        if(nextCheese){
+        nextCheese = Math.floor( Math.random() * this.score );
+        if(nextCheese < 10 || nextCheese < this.score*.30){
             this.activeCheese = cheese;
         }else{
             this.activeCheese = rottenCheese;
