@@ -14,15 +14,24 @@ var cursors,
     enemy,
     princess,
     cheese,
-    rottenCheese;
+    rottenCheese, 
+    sounds;
 
 play.prototype = {
     preload: function () {
-        this.game.load.image('enemy', 'assets/enemy.png');
+        var game = this.game;
+        //sounds
+        this.game.load.audio('explosion', 'assets/audio/dies.wav');
+        //sprites
+        this.game.load.image('lumberjack', 'assets/enemy-1.png');
+        this.game.load.image('wolf', 'assets/enemy-2.png');
         this.game.load.image('princess', 'assets/princess.png');
         this.game.load.image('heart', 'assets/heart.png');
         this.game.load.image('cheese', 'assets/cheese.png');
         this.game.load.image('rotten-cheese', 'assets/rotten-cheese.png');
+        sounds = {
+                dies: game.add.audio('explosion'),
+        };
     },
     create: create,
     update: update,
@@ -122,6 +131,8 @@ function checkInputs(){
     }
 }
 function gameOver(){
+    console.log(sounds.dies);
+    sounds.dies.play();
     this.game.state.start('gameOver', true, false, this);
     return;
 }
@@ -225,14 +236,15 @@ function renderGroup(member) {
     this.game.debug.body(member);
 }
 function createEnemies() {
-    var game = this.game, line = map[getRandom(0, map.length-1)];
+    var game = this.game, line = map[getRandom(0, map.length-1)], isWolf = getRandom(0, 3) === 0, enemySpriteName = isWolf ? 'wolf':'lumberjack';
+    
     for (var i = 0; i < line.length; i++) {
         if (line[i] === 0) {
             continue;
         }
 
         var x = generateXForEnemy(i, game);
-        var enemy = enemyGroup.create(x, -100, 'enemy');
+        var enemy = enemyGroup.create(x, -100, enemySpriteName);
         enemy.body.velocity.y = 100;
     }
 }
