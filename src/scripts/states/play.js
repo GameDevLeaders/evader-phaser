@@ -1,13 +1,8 @@
 var play = function(game) {};
 var Princess = require('../entities/princess');
-var map = [
-    [0,0,1],
-    [0,1,0],
-    [0,1,1],
-    [1,0,0],
-    [1,0,1],
-    [1,1,0]
-];
+var World = require('../entities/world');
+
+var MAX_VELOCITY = 800;
 
 var cursors,
     enemyGroup,
@@ -74,6 +69,7 @@ function createCheeses(){
     this.activeCheese = null;
 }
 function create() {
+    this.game._my_world = new World();
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.lives = 3;
     createCheeses.call(this);
@@ -103,24 +99,29 @@ function createPlayer(){
     princess.setPosition(x, y);
     this.score = 0;
 }
-function updateEnemies(){
+
+function updateEnemies() {
     var game = this.game, enemies = enemyGroup.children;
     for (var i = 0; i < enemies.length; i++) {
-      enemies[i].body.velocity.y = 100 * this.game.turbo;
-      if (enemies[i].body.y > game.height) {
-          this.score++;
-          setScoreText.call(this);
-          enemyGroup.remove(enemies[i], true, true);
-      }
+
+        var velocity = this.game._my_world.velocity * this.game.turbo;
+        enemies[i].body.velocity.y = velocity < MAX_VELOCITY ? velocity : MAX_VELOCITY;
+
+        if (enemies[i].body.y > game.height) {
+            this.score++;
+            setScoreText.call(this);
+            enemyGroup.remove(enemies[i], true, true);
+        }
     }
-    var lastEnemy = enemyGroup.children[enemyGroup.children.length-1];
+    var lastEnemy = enemyGroup.children[enemyGroup.children.length - 1];
     if (lastEnemy.body.y > lastEnemy.body.height * 2.5) {
-      this.createEnemies();
+        this.createEnemies();
     }
 }
+
 function checkInputs(){
     var game = this.game;
-    this.game.turbo = 2;
+    this.game.turbo = 1;
     if (cursors.up.isDown) {
         this.game.turbo = 4;
     }
@@ -132,7 +133,7 @@ function checkInputs(){
 }
 function gameOver(){
     console.log(sounds.dies);
-    sounds.dies.play();
+    //sounds.dies.play(); // PLEASE !!
     this.game.state.start('gameOver', true, false, this);
     return;
 }
@@ -220,6 +221,7 @@ function updateEntities(){
     updateCheeses.call(this);
 }
 function update() {
+    this.game._my_world.update(this.score);
     updateEntities.call(this);
     this.checkCollisions.call(this, this.game);
     this.checkInputs();
@@ -235,9 +237,13 @@ function render(){
 function renderGroup(member) {
     this.game.debug.body(member);
 }
+
 function createEnemies() {
-    var game = this.game, line = map[getRandom(0, map.length-1)], isWolf = getRandom(0, 3) === 0, enemySpriteName = isWolf ? 'wolf':'lumberjack';
-    
+    var game = this.game;
+    var line = this.game._my_world.getLine();
+    var isWolf = getRandom(0, 3) === 0;
+    var enemySpriteName = isWolf ? 'wolf' : 'lumberjack';
+
     for (var i = 0; i < line.length; i++) {
         if (line[i] === 0) {
             continue;

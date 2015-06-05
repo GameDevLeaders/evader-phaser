@@ -144,6 +144,7 @@ gulp.task('lint', function () {
 });
 
 function onBrowserifyError(err) {
-  gutil(gutil.colors.red('ERROR'), gutil.colors.grey(err.message));
+  //gutil(gutil.colors.red('ERROR'), gutil.colors.grey(err.message)); // TODO - tony - this sucker is failing
+  console.log(err.message);
   this.emit('end');
 };
