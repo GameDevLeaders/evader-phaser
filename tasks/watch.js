@@ -12,7 +12,7 @@ gulp.task('watch', function () {
     [
       './config.js',
       './src/scripts/**/*.js'
-    ], ['lint', 'build:js']
+    ], ['build:js'] // fck linter
   );
   gulp.watch('./src/stylesheets/*.scss', ['build:css']);
 });

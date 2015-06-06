@@ -22,7 +22,8 @@ function gameOverState() {
             "Game Over\nClick to start again...",
             style
         );
-        scoreText = "Score: " + this.score;
+        // TODO - tony - temporal approach
+        scoreText = "Score: " + this.game._my_world.score;
         this.scoreText = this.game.add.text(
                 (this.game.width/2) - (scoreText.length*3),
                 this.game.world.centerY - 25,

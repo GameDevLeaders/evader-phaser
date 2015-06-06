@@ -1,94 +1,160 @@
-var step = 6;
-var Princess = function(game) {
-    var princess = {
-            fuel: 100,
-            create: create,
-            setPosition: setPosition,
-//            update: update,
-            render: render,
-//            checkCollisions: checkCollisions,
-            moveLeft: moveLeft,
-            moveRight: moveRight,
-            playerGroup: null,
-            getBody: getBody,
-            game: game,
-        };
-        princess.create();
-        return princess;
+'use strict';
+
+var c = require('../constants');
+var timer = {};
+
+/*
+ * #Princess
+ */
+
+var Princess = module.exports = function (gameInstance, x, y, frame) {
+    console.assert(gameInstance, 'You should provide a gameInstance instance to this Sprite [Princess]');
+    Phaser.Sprite.call(this, gameInstance, x, y, 'princess', frame);
+    this.anchor.setTo(0.5, 0.5);
+    this._data = {
+        lives: c.INITIAL_LIVES,
+        fuel: c.MAX_FUEL,
+        facing: c.CENTER,
+        collisions: []
+    };
+    gameInstance.physics.arcade.enable(this);
+    gameInstance.add.existing(this);
+    if (gameInstance._debug) {
+        gameInstance.debug.body(this);
+        window.princess = this;
+    }
 };
 
-function setPosition(x, y){
-    this.playerGroup.forEachAlive(setGroupPosition, this, x, y);
-}
-function setGroupPosition(member, x, y){
-    member.x = x;
-    member.y = y;
-}
-function create(){
-    var playerGroup = this.game.add.group();
-    playerGroup.enableBody = true;
-    var playerHBox = playerGroup.create(0, 0, 'princess'),
-        playerVBox = playerGroup.create(0, 0);
-    playerHBox.body.setSize(28,80,8,5);
-    playerVBox.body.setSize(25,40,30,10);
-    playerHBox.name = 'princess';
-    playerVBox.name = 'mouse';
-    playerHBox.body.velocity.y = 0;
-    playerVBox.body.velocity.y = 0;
+Princess.prototype = Object.create(Phaser.Sprite.prototype);
+Princess.prototype.constructor = Princess;
 
-    this.playerGroup = playerGroup;
-}
-module.exports = Princess;
+/*
+ * #addFuel
+ */
 
+Princess.prototype.addFuel = function addFuel(addedValue) {
+    var newValue = this._data.fuel + addedValue;
+    this._data.fuel = c.MAX_FUEL > newValue ? newValue : c.MAX_FUEL;
+    return this;
+};
 
+/*
+ * #checkCollision
+ */
 
-function moveLeft(){
-    moveGroupLeft.call(this);
-    //this.playerGroup.forEachAlive(moveGroupLeft, this);
-}
-function moveGroupLeft(member){
-    var parts = this.playerGroup.children, newX = 0,
-        leftestBodyPart = parts[0], diff = step*this.game.turbo,
-        leftestX = leftestBodyPart.body.x; //princess body
-    newX = leftestX - diff;
+Princess.prototype.checkCollision = function checkCollision() {
+    var that = this;
+    this._data.collisions.forEach(function (entry) {
+        that.game.physics.arcade.overlap(that, entry.entity, entry.callback);
+    });
+    return this;
+};
 
-    if(newX < 0){
-        //If moving out of the screen, stay at 0.
-        diff = leftestX;
+/*
+ * #checkLives
+ */
+
+Princess.prototype.checkLives = function checkLives() {
+    if (0 >= this._data.lives) {
+        this.game.state.start('gameOver', true, false, this);
     }
-    //Move every part to the left.
-    for (var i = 0; i < parts.length; i++) {
-        newX = parts[i].body.x - diff;
-        parts[i].body.x = newX;
-    }
-}
-function moveRight(){
-    moveGroupRight.call(this);
-//    this.playerGroup.forEachAlive(moveGroupRight, this);
-}
-function moveGroupRight(){
-    var parts = this.playerGroup.children, newX = 0,
-    mousePart = parts[1], diff = step*this.game.turbo,
-    mouseRightX = mousePart.body.x + mousePart.body.width; //mouse right x
-    newX = mouseRightX + diff;
+    return this;
+};
 
-    if(mouseRightX + diff >= this.game.width){
-        //If moving out of the screen, stay at max width.
-        diff = this.game.width - mouseRightX;
-        return;
+/*
+ * #consumeFuel
+ */
+
+Princess.prototype.consumeFuel = function consumeFuel() {
+    var that = this;
+    if (!timer.fuel && 0 < this._data.fuel) {
+        timer.fuel = setTimeout(function () {
+            that._data.fuel -= 1;
+            console.log(that._data.fuel);
+            delete timer.fuel;
+        }, c.CONSUME_FUEL_DELAY);
     }
-    for (var i = 0; i < parts.length; i++) {
-        newX = parts[i].body.x + diff;
-        parts[i].body.x = newX;
-        newX = parts[i].body.x + step*this.game.turbo;
+    return this;
+};
+
+/*
+ * #move
+ */
+
+Princess.prototype.move = function move(direction) {
+    // Set new facing direction
+    var data = this._data;
+    data.facing = direction;
+    // Modify this position
+    if (c.LEFT === direction) {
+        this.position.x -= c.STEP;
+    } else {
+        this.position.x += c.STEP;
     }
-}
-function getBody(){
-    return this.playerGroup;
-}
-function render(){
-    this.playerGroup.forEachAlive(renderGroup, this);
-}
-function renderGroup(member) {
-    this.game.debug.body(member);
-}
+    // Clear past timers
+    if (timer.facing) {
+        clearTimeout(timer.facing);
+        delete timer.facing;
+    }
+    // Set new timer to restore this facing
+    timer.facing = setTimeout(function () {
+        data.facing = c.CENTER;
+    }, c.RESTORE_FACING_DELAY);
+    return this;
+};
+
+/*
+ * #registerCollision
+ */
+
+Princess.prototype.registerCollision = function registerCollision(entity, callback) {
+    if (Array.isArray(entity)) {
+        entity.forEach(function (obj) {
+            addEnemy(obj);
+        });
+    } else {
+        this._data.collisions.push({
+            entity: entity,
+            callback: callback
+        });
+    }
+};
+
+/*
+ * #update
+ */
+
+Princess.prototype.update = function update() {
+    return this.checkLives()
+        .consumeFuel()
+        .checkCollision()
+        .reRender();
+};
+
+/*
+ * #reRender
+ */
+
+Princess.prototype.reRender = function reRender() {
+    // Change texture
+    var facing = this._data.facing;
+    if (c.LEFT === facing) {
+        this.loadTexture('princess_left');
+        this.body.setSize(45, 100, 8, 0);
+        this.scale.x = -1;
+    } else if (c.RIGHT === facing) {
+        this.loadTexture('princess_left');
+        this.body.setSize(45, 100, -8, 0);
+        this.scale.x = 1;
+    } else {
+        this.loadTexture('princess_center');
+        this.body.setSize(45, 100, -3, 0);
+        this.scale.x = 1;
+    }
+    // Render collision box
+    if (this.game._debug) {
+        this.game.debug.body(this);
+        this.game.debug.bodyInfo(this, 10, 10);
+    }
+    return this;
+};

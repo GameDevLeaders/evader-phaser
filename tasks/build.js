@@ -77,7 +77,7 @@ gulp.task('build:fonts', function () {
 });
 
 gulp.task('build:images', function () {
-  return gulp.src(['./assets/*.jpg', './assets/*.png'])
+  return gulp.src(['./assets/**/*.jpg', './assets/**/*.png'])
     .pipe(imagemin())
     .pipe(gulp.dest('./build/assets/'))
     .pipe(browserSync.reload({stream: true, once: true}));

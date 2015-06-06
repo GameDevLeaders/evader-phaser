@@ -1,16 +1,18 @@
-var play = function(game) {};
 var Princess = require('../entities/princess');
 var World = require('../entities/world');
-
-var MAX_VELOCITY = 800;
+var c = require('../constants');
 
 var cursors,
+    cheeseGroup,
     enemyGroup,
-    enemy,
     princess,
+    fuelContainer,
+    fuelBar,
     cheese,
-    rottenCheese, 
+    rottenCheese,
     sounds;
+
+var play = function(game) {};
 
 play.prototype = {
     preload: function () {
@@ -18,42 +20,34 @@ play.prototype = {
         //sounds
         this.game.load.audio('explosion', 'assets/audio/dies.wav');
         //sprites
+        this.game.load.image('princess_center', 'assets/sprites/princess-back.png');
+        this.game.load.image('princess_left', 'assets/sprites/princess-side.png');
+        this.game.load.image('fuel_container', 'assets/sprites/fuelbar.png');
+        this.game.load.image('fuel', 'assets/sprites/fuelbar-fill.png');
+        this.game.load.image('cheese', 'assets/sprites/cheese.png');
+        this.game.load.image('rotten-cheese', 'assets/sprites/rottencheese.png');
+
+        /***** Deprecated *****/
         this.game.load.image('lumberjack', 'assets/enemy-1.png');
         this.game.load.image('wolf', 'assets/enemy-2.png');
         this.game.load.image('princess', 'assets/princess.png');
         this.game.load.image('heart', 'assets/heart.png');
-        this.game.load.image('cheese', 'assets/cheese.png');
-        this.game.load.image('rotten-cheese', 'assets/rotten-cheese.png');
         sounds = {
-                dies: game.add.audio('explosion'),
+                dies: game.add.audio('explosion')
         };
     },
     create: create,
     update: update,
-    render: render,
-    //princess : null,
-    createPlayer: createPlayer,
     createEnemies: createEnemies,
-    checkCollisions: checkCollisions,
     updateEnemies: updateEnemies,
-    updatePlayer: updatePlayer,
     checkInputs: checkInputs,
-    score: 0,
-    activeCheese: null,
+    activeCheese: null
 };
-function setScoreText(){
-    this.scoreText.text = 'Score: ' + this.score;
-}
-function setFuelText(){
-    if(princess.fuel<=0){
-        princess.fuel = 0;
-    }
-    this.fuelText.text = 'Fuel: ' + princess.fuel;
-}
+
 function createCheeses(){
     var game = this.game, newX = 0;
-    cheese = this.game.add.sprite(0, -100, 'cheese');
-    rottenCheese = this.game.add.sprite(0, -100, 'rotten-cheese');
+    cheese = cheeseGroup.create(0, -100, 'cheese');
+    rottenCheese = cheeseGroup.create(0, -100, 'rotten-cheese');
     newX = Math.floor( Math.random() * (this.game.width - cheese.width) );
     cheese.x = newX;
     rottenCheese.x = newX;
@@ -69,35 +63,52 @@ function createCheeses(){
     this.activeCheese = null;
 }
 function create() {
-    this.game._my_world = new World();
+    var that = this;
+
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    this.lives = 3;
+    this.game._debug = true;
+    this.game._my_world = new World();
+
+    cheeseGroup = this.game.add.group();
+    cheeseGroup.enableBody = true;
     createCheeses.call(this);
+
     enemyGroup = this.game.add.group();
     enemyGroup.enableBody = true;
+
     cursors = this.game.input.keyboard.createCursorKeys();
-    this.createPlayer();
+
+    princess = new Princess(this.game, 160, 400, 0);
+    princess.registerCollision(enemyGroup, function (that, enemy) {
+        enemy.kill();
+        that._data.lives -= 1;
+    });
+    princess.registerCollision(cheeseGroup, function (that, cheese) {
+        that.addFuel(cheese.fuel);
+        that.score += Math.floor(cheese.fuel / 2);
+
+        resetCheese.call(that, cheese);
+    });
+
+    fuelContainer = this.game.add.sprite(0,0,'fuel_container');
+    fuelBar = this.game.add.sprite(0,0,'fuel');
+    fuelBar.cropEnabled = true;
+
     this.createEnemies();
 
     this.hearts = this.game.add.group();
-    this.scoreText = this.game.add.text(10, 10, 'Score: ' + this.score, { font: '16px Arial', fill: '#fff' });
-    this.fuelText =  this.game.add.text(10, 30, 'Fuel: ' + princess.fuel, { font: '16px Arial', fill: '#fff' });
-    this.game.add.text(this.game.world.width - 110, 10, 'Lives : ', { font: '16px Arial', fill: '#fff' });
+    this.scoreText = this.game.add.text(10, 10, 'Score: ' + this.game._my_world.score, { font: '16px Arial', fill: '#fff' });
+    this.game.add.text(this.game.world.width - 110, 10, 'Lives : ' + princess._data.lives, { font: '16px Arial', fill: '#fff' });
     for (var i = 0; i < 3; i++)
     {
         var heart = this.hearts.create(this.game.world.width - 100 + (30 * i), 45, 'heart');
         heart.anchor.setTo(0.5, 0.5);
         heart.alpha = 0.6;
     }
-}
-
-function createPlayer(){
-    var game = this.game,
-        x = 50, 
-        y = game.height - 100;
-    princess = new Princess(game);
-    princess.setPosition(x, y);
-    this.score = 0;
+    if (this.game._debug) {
+        this.game.stage.disableVisibilityChange = true;
+        this.game.debug.start();
+    }
 }
 
 function updateEnemies() {
@@ -105,11 +116,10 @@ function updateEnemies() {
     for (var i = 0; i < enemies.length; i++) {
 
         var velocity = this.game._my_world.velocity * this.game.turbo;
-        enemies[i].body.velocity.y = velocity < MAX_VELOCITY ? velocity : MAX_VELOCITY;
+        enemies[i].body.velocity.y = velocity < c.MAX_VELOCITY ? velocity : c.MAX_VELOCITY;
 
         if (enemies[i].body.y > game.height) {
-            this.score++;
-            setScoreText.call(this);
+            this.game._my_world.score++;
             enemyGroup.remove(enemies[i], true, true);
         }
     }
@@ -120,15 +130,15 @@ function updateEnemies() {
 }
 
 function checkInputs(){
-    var game = this.game;
+    // TODO - Refactor this
     this.game.turbo = 1;
     if (cursors.up.isDown) {
         this.game.turbo = 4;
     }
     if (cursors.left.isDown) {
-        princess.moveLeft(game);
+        princess.move(c.LEFT);
     } else if (cursors.right.isDown) {
-        princess.moveRight(game);
+        princess.move(c.RIGHT);
     }
 }
 function gameOver(){
@@ -137,45 +147,7 @@ function gameOver(){
     this.game.state.start('gameOver', true, false, this);
     return;
 }
-function checkCollisions(){
-    var currentState = this, game = this.game;
-    game.physics.arcade.overlap(princess.getBody(), enemyGroup, function (player, enemy, c) {
-        enemy.kill();
-        currentState.lives--;
-        if(currentState.lives == 0) {
-            gameOver.call(currentState);
-            return;
-        }
-        var heart = currentState.hearts.getFirstAlive();
-        if (heart)
-        {
-            heart.kill();
-        }
-    });
 
-    game.physics.arcade.overlap(princess.getBody(), this.activeCheese, function (cheese, part, c) {
-        princess.fuel += cheese.fuel;
-        resetCheese.call(currentState, cheese);
-        setFuelText.call(currentState);
-        if(princess.fuel > 0) {
-            this.score += (cheese.fuel / 2);
-            if(princess.fuel > 100) {
-                princess.fuel = 100;
-            }
-        }
-    });
-}
-var skip = 30;
-function updatePlayer(){
-    var currentState = this, game = this.game;
-    if(skip > 0){
-        skip -= 2;
-        return;
-    }
-    skip = 60;
-    princess.fuel-=2;
-    setFuelText.call(this);
-}
 function resetCheese(currentCheese){
     currentCheese.y = -100 - 10 * Math.floor( Math.random() * 10 );
     currentCheese.x = Math.floor( Math.random() * this.game.width );
@@ -184,10 +156,7 @@ function resetCheese(currentCheese){
 }
 function updateCheeses(){
     var currentCheese = this.activeCheese, game = this.game, nextCheese = 0, newX;
-    if(princess.fuel <= 0) {
-        gameOver.call(this);
-        return;
-    }
+
     if(currentCheese){
         if(currentCheese.body) {
             currentCheese.body.velocity.y = 100 * this.game.turbo;
@@ -200,8 +169,8 @@ function updateCheeses(){
             resetCheese.call(this, currentCheese);
         }
     }else{
-        nextCheese = Math.floor( Math.random() * this.score );
-        if(nextCheese < 10 || nextCheese < this.score*.30){
+        nextCheese = Math.floor( Math.random() * this.game._my_world.score );
+        if(nextCheese < 10 || nextCheese < this.game._my_world.score*.30){
             this.activeCheese = cheese;
         }else{
             this.activeCheese = rottenCheese;
@@ -216,26 +185,26 @@ function updateCheeses(){
     }
 }
 function updateEntities(){
-    this.updatePlayer();
     this.updateEnemies();
     updateCheeses.call(this);
 }
 function update() {
-    this.game._my_world.update(this.score);
+    this.game._my_world.update();
     updateEntities.call(this);
-    this.checkCollisions.call(this, this.game);
-    this.checkInputs();
-}
 
-/*
- * Calls the render for each entity, just user for debugging purposes for now.
- */
-function render(){
-    //enemyGroup.forEachAlive(renderGroup, this);
-    //princess.render();
-}
-function renderGroup(member) {
-    this.game.debug.body(member);
+    this.checkInputs();
+
+    princess.update();
+
+    // TODO - tony - fix this
+    fuelBar.width = (princess._data.fuel / c.MAX_FUEL) * fuelContainer.width;
+    //window.aa = fuelBar;
+
+    if (this.game._debug) {
+        enemyGroup.forEachAlive(function (member) {
+            this.game.debug.body(member);
+        }, this);
+    }
 }
 
 function createEnemies() {
