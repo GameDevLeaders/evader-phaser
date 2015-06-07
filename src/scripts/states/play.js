@@ -28,10 +28,7 @@ play.prototype = {
         this.game.load.image('rotten-cheese', 'assets/sprites/rottencheese.png');
         this.game.load.image('lumberjack', 'assets/sprites/lumberjack.png');
         this.game.load.image('wolf', 'assets/sprites/wolf.png');
-
-        /***** Deprecated *****/
-        this.game.load.image('princess', 'assets/princess.png');
-        this.game.load.image('heart', 'assets/heart.png');
+        this.game.load.image('heart', 'assets/sprites/dress.png');
         sounds = {
                 dies: game.add.audio('explosion')
         };
@@ -69,7 +66,7 @@ function create() {
     var that = this;
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    this.game._debug = true;
+    this.game._debug = false;
     this.game._my_world = new World();
 
     cheeseGroup = this.game.add.group();
@@ -102,10 +99,10 @@ function create() {
 
     this.hearts = this.game.add.group();
     this.scoreText = this.game.add.text(10, 10, 'Score: ' + this.game._my_world.score, { font: '16px Arial', fill: '#fff' });
-    this.game.add.text(this.game.world.width - 110, 10, 'Lives : ' + princess._data.lives, { font: '16px Arial', fill: '#fff' });
     for (var i = 0; i < 3; i++)
     {
         var heart = this.hearts.create(this.game.world.width - 100 + (30 * i), 45, 'heart');
+        heart.scale.set(0.4, 0.4);
         heart.anchor.setTo(0.5, 0.5);
         heart.alpha = 0.6;
     }
