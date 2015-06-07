@@ -70,7 +70,7 @@ Princess.prototype.consumeFuel = function consumeFuel() {
     if (!timer.fuel && 0 < this._data.fuel) {
         timer.fuel = setTimeout(function () {
             that._data.fuel -= 1;
-            console.log(that._data.fuel);
+            //console.log(that._data.fuel);
             delete timer.fuel;
         }, c.CONSUME_FUEL_DELAY);
     }
