@@ -29,6 +29,8 @@ play.prototype = {
         this.game.load.image('lumberjack', 'assets/sprites/lumberjack.png');
         this.game.load.image('wolf', 'assets/sprites/wolf.png');
         this.game.load.image('heart', 'assets/sprites/dress.png');
+        this.game.load.image("background", "assets/sprites/castle-texture.png");
+
         sounds = {
                 dies: game.add.audio('explosion')
         };
@@ -68,6 +70,10 @@ function create() {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game._debug = false;
     this.game._my_world = new World();
+
+    console.log(this.game.world.width);
+    this.bg1 = this.game.add.tileSprite(0, 0, this.game.world.width, this.game.cache.getImage('background').height, 'background');
+    this.bg2 = this.game.add.tileSprite(0, this.game.cache.getImage('background').height, this.game.world.width, this.game.cache.getImage('background').height, 'background');
 
     cheeseGroup = this.game.add.group();
     cheeseGroup.enableBody = true;
@@ -196,6 +202,14 @@ function updateEntities(){
     updateCheeses.call(this);
 }
 function update() {
+    var velocity = parseInt(this.game._my_world.velocity / 50);
+    if(this.game.turbo == 4) {
+        velocity += velocity;
+    }
+
+    this.bg1.tilePosition.y += velocity;
+    this.bg2.tilePosition.y += velocity;
+
     this.game._my_world.update();
     updateEntities.call(this);
 
