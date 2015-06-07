@@ -26,10 +26,10 @@ play.prototype = {
         this.game.load.image('fuel', 'assets/sprites/fuelbar-fill.png');
         this.game.load.image('cheese', 'assets/sprites/cheese.png');
         this.game.load.image('rotten-cheese', 'assets/sprites/rottencheese.png');
+        this.game.load.image('lumberjack', 'assets/sprites/lumberjack.png');
+        this.game.load.image('wolf', 'assets/sprites/wolf.png');
 
         /***** Deprecated *****/
-        this.game.load.image('lumberjack', 'assets/enemy-1.png');
-        this.game.load.image('wolf', 'assets/enemy-2.png');
         this.game.load.image('princess', 'assets/princess.png');
         this.game.load.image('heart', 'assets/heart.png');
         sounds = {
@@ -47,7 +47,10 @@ play.prototype = {
 function createCheeses(){
     var game = this.game, newX = 0;
     cheese = cheeseGroup.create(0, -100, 'cheese');
+    cheese.scale.set(.5,.5);
+
     rottenCheese = cheeseGroup.create(0, -100, 'rotten-cheese');
+    rottenCheese.scale.set(.5,.5);
     newX = Math.floor( Math.random() * (this.game.width - cheese.width) );
     cheese.x = newX;
     rottenCheese.x = newX;
@@ -81,6 +84,7 @@ function create() {
     princess = new Princess(this.game, 160, 400, 0);
     princess.registerCollision(enemyGroup, function (that, enemy) {
         enemy.kill();
+        enemyGroup.remove(enemy);
         that._data.lives -= 1;
     });
     princess.registerCollision(cheeseGroup, function (that, cheese) {
@@ -123,9 +127,15 @@ function updateEnemies() {
             enemyGroup.remove(enemies[i], true, true);
         }
     }
-    var lastEnemy = enemyGroup.children[enemyGroup.children.length - 1];
-    if (lastEnemy.body.y > lastEnemy.body.height * 2.5) {
+
+    if(!enemyGroup.length) {
         this.createEnemies();
+    }
+    else {
+        var lastEnemy = enemyGroup.children[enemyGroup.children.length - 1];
+        if (lastEnemy.body.y > lastEnemy.body.height * 2.5) {
+            this.createEnemies();
+        }
     }
 }
 
@@ -205,6 +215,15 @@ function update() {
             this.game.debug.body(member);
         }, this);
     }
+
+    if(this.hearts.length > princess._data.lives) {
+        var heart = this.hearts.getFirstAlive();
+        if (heart)
+        {
+            heart.kill();
+            this.hearts.remove(heart);
+        }
+    }
 }
 
 function createEnemies() {
@@ -220,6 +239,7 @@ function createEnemies() {
 
         var x = generateXForEnemy(i, game);
         var enemy = enemyGroup.create(x, -100, enemySpriteName);
+        enemy.scale.set(.7,.7);
         enemy.body.velocity.y = 100;
     }
 }
