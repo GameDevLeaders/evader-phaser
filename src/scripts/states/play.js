@@ -26,12 +26,11 @@ play.prototype = {
         this.game.load.image('fuel', 'assets/sprites/fuelbar-fill.png');
         this.game.load.image('cheese', 'assets/sprites/cheese.png');
         this.game.load.image('rotten-cheese', 'assets/sprites/rottencheese.png');
+        this.game.load.image('lumberjack', 'assets/sprites/lumberjack.png');
+        this.game.load.image('wolf', 'assets/sprites/wolf.png');
+        this.game.load.image('heart', 'assets/sprites/dress.png');
+        this.game.load.image("background", "assets/sprites/castle-texture.png");
 
-        /***** Deprecated *****/
-        this.game.load.image('lumberjack', 'assets/enemy-1.png');
-        this.game.load.image('wolf', 'assets/enemy-2.png');
-        this.game.load.image('princess', 'assets/princess.png');
-        this.game.load.image('heart', 'assets/heart.png');
         sounds = {
                 dies: game.add.audio('explosion')
         };
@@ -47,7 +46,10 @@ play.prototype = {
 function createCheeses(){
     var game = this.game, newX = 0;
     cheese = cheeseGroup.create(0, -100, 'cheese');
+    cheese.scale.set(.5,.5);
+
     rottenCheese = cheeseGroup.create(0, -100, 'rotten-cheese');
+    rottenCheese.scale.set(.5,.5);
     newX = Math.floor( Math.random() * (this.game.width - cheese.width) );
     cheese.x = newX;
     rottenCheese.x = newX;
@@ -66,8 +68,12 @@ function create() {
     var that = this;
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    this.game._debug = true;
+    this.game._debug = false;
     this.game._my_world = new World();
+
+    console.log(this.game.world.width);
+    this.bg1 = this.game.add.tileSprite(0, 0, this.game.world.width, this.game.cache.getImage('background').height, 'background');
+    this.bg2 = this.game.add.tileSprite(0, this.game.cache.getImage('background').height, this.game.world.width, this.game.cache.getImage('background').height, 'background');
 
     cheeseGroup = this.game.add.group();
     cheeseGroup.enableBody = true;
@@ -81,6 +87,7 @@ function create() {
     princess = new Princess(this.game, 160, 400, 0);
     princess.registerCollision(enemyGroup, function (that, enemy) {
         enemy.kill();
+        enemyGroup.remove(enemy);
         that._data.lives -= 1;
     });
     princess.registerCollision(cheeseGroup, function (that, cheese) {
@@ -98,10 +105,10 @@ function create() {
 
     this.hearts = this.game.add.group();
     this.scoreText = this.game.add.text(10, 10, 'Score: ' + this.game._my_world.score, { font: '16px Arial', fill: '#fff' });
-    this.game.add.text(this.game.world.width - 110, 10, 'Lives : ' + princess._data.lives, { font: '16px Arial', fill: '#fff' });
     for (var i = 0; i < 3; i++)
     {
         var heart = this.hearts.create(this.game.world.width - 100 + (30 * i), 45, 'heart');
+        heart.scale.set(0.4, 0.4);
         heart.anchor.setTo(0.5, 0.5);
         heart.alpha = 0.6;
     }
@@ -123,9 +130,15 @@ function updateEnemies() {
             enemyGroup.remove(enemies[i], true, true);
         }
     }
-    var lastEnemy = enemyGroup.children[enemyGroup.children.length - 1];
-    if (lastEnemy.body.y > lastEnemy.body.height * 2.5) {
+
+    if(!enemyGroup.length) {
         this.createEnemies();
+    }
+    else {
+        var lastEnemy = enemyGroup.children[enemyGroup.children.length - 1];
+        if (lastEnemy.body.y > lastEnemy.body.height * 2.5) {
+            this.createEnemies();
+        }
     }
 }
 
@@ -189,6 +202,14 @@ function updateEntities(){
     updateCheeses.call(this);
 }
 function update() {
+    var velocity = parseInt(this.game._my_world.velocity / 50);
+    if(this.game.turbo == 4) {
+        velocity += velocity;
+    }
+
+    this.bg1.tilePosition.y += velocity;
+    this.bg2.tilePosition.y += velocity;
+
     this.game._my_world.update();
     updateEntities.call(this);
 
@@ -205,6 +226,15 @@ function update() {
             this.game.debug.body(member);
         }, this);
     }
+
+    if(this.hearts.length > princess._data.lives) {
+        var heart = this.hearts.getFirstAlive();
+        if (heart)
+        {
+            heart.kill();
+            this.hearts.remove(heart);
+        }
+    }
 }
 
 function createEnemies() {
@@ -220,6 +250,7 @@ function createEnemies() {
 
         var x = generateXForEnemy(i, game);
         var enemy = enemyGroup.create(x, -100, enemySpriteName);
+        enemy.scale.set(.7,.7);
         enemy.body.velocity.y = 100;
     }
 }
