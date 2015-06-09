@@ -9,7 +9,10 @@ var timer = {};
 
 var Princess = module.exports = function (gameInstance, x, y, frame) {
     console.assert(gameInstance, 'You should provide a gameInstance instance to this Sprite [Princess]');
-    Phaser.Sprite.call(this, gameInstance, x, y, 'princess', frame);
+    Phaser.Sprite.call(this, gameInstance, x, y, 'princess');
+    //console.log('x', x);
+//    sprite = gameInstance.add.sprite(gameInstance.width/2 - 50, gameInstance.height - 140, 'princess');
+//    sprite.frame = frame;
     this.anchor.setTo(0.5, 0.5);
     this._data = {
         lives: c.INITIAL_LIVES,
@@ -139,17 +142,20 @@ Princess.prototype.reRender = function reRender() {
     // Change texture
     var facing = this._data.facing;
     if (c.LEFT === facing) {
-        this.loadTexture('princess_left');
-        this.body.setSize(45, 100, 8, 0);
-        this.scale.x = -1;
+        this.frame = 1;
+//        this.loadTexture('princess_left');
+//        this.body.setSize(45, 100, 8, 0);
+//        this.scale.x = -1;
     } else if (c.RIGHT === facing) {
-        this.loadTexture('princess_left');
-        this.body.setSize(45, 100, -8, 0);
-        this.scale.x = 1;
+        this.frame = 2;
+//        this.loadTexture('princess_left');
+//        this.body.setSize(45, 100, -8, 0);
+//        this.scale.x = 1;
     } else {
-        this.loadTexture('princess_center');
-        this.body.setSize(45, 100, -3, 0);
-        this.scale.x = 1;
+//        this.loadTexture('princess_center');
+//        this.body.setSize(45, 100, -3, 0);
+//        this.scale.x = 2;
+        this.frame = 0;
     }
     // Render collision box
     if (this.game._debug) {
