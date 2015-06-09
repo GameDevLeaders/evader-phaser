@@ -1,5 +1,7 @@
 'use strict';
 
+var HighScore = require('../highscore');
+
 var gameOver = function(game) {};
 
 gameOver.prototype = gameOverState();
@@ -12,6 +14,7 @@ function gameOverState() {
     };
     function init(state){
         this.score = state.score;
+        HighScore.setIfHighScore(this.game._my_world.score);
     }
     function create() {
         console.log(this.game.add.text);
@@ -24,9 +27,10 @@ function gameOverState() {
         );
         // TODO - tony - temporal approach
         scoreText = "Score: " + this.game._my_world.score;
+        scoreText += "\n Your HighScore: " + HighScore.get();
         this.scoreText = this.game.add.text(
                 (this.game.width/2) - (scoreText.length*3),
-                this.game.world.centerY - 25,
+                this.game.world.centerY - 55,
                 scoreText,
                 style
             );
