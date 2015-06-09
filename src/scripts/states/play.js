@@ -20,13 +20,15 @@ play.prototype = {
         //sounds
         this.game.load.audio('explosion', 'assets/audio/dies.wav');
         //sprites
+        this.game.load.spritesheet('princess', 'assets/sprites/princess.png', 100, 140, 3);
+        this.game.load.spritesheet('lumberjack', 'assets/sprites/lumberjack-s.png', 168, 124, 2);
         this.game.load.image('princess_center', 'assets/sprites/princess-back.png');
         this.game.load.image('princess_left', 'assets/sprites/princess-side.png');
         this.game.load.image('fuel_container', 'assets/sprites/fuelbar.png');
         this.game.load.image('fuel', 'assets/sprites/fuelbar-fill.png');
         this.game.load.image('cheese', 'assets/sprites/cheese.png');
         this.game.load.image('rotten-cheese', 'assets/sprites/rottencheese.png');
-        this.game.load.image('lumberjack', 'assets/sprites/lumberjack.png');
+//        this.game.load.image('lumberjack', 'assets/sprites/lumberjack.png');
         this.game.load.image('wolf', 'assets/sprites/wolf.png');
         this.game.load.image('heart', 'assets/sprites/dress.png');
         this.game.load.image("background", "assets/sprites/castle-texture.png");
@@ -238,18 +240,29 @@ function update() {
 }
 
 function createEnemies() {
-    var game = this.game;
-    var line = this.game._my_world.getLine();
-    var isWolf = getRandom(0, 3) === 0;
-    var enemySpriteName = isWolf ? 'wolf' : 'lumberjack';
+    var game = this.game, 
+        line = this.game._my_world.getLine(),
+        isWolf = getRandom(0, 3) === 0,
+        enemySpriteName = isWolf ? 'wolf' : 'lumberjack',
+        x, //generated X
+        enemy; //the enemy (Sprite) to be added.
 
     for (var i = 0; i < line.length; i++) {
         if (line[i] === 0) {
             continue;
         }
 
-        var x = generateXForEnemy(i, game);
-        var enemy = enemyGroup.create(x, -100, enemySpriteName);
+        x = generateXForEnemy(i, game);
+        if(isWolf){
+            enemy = enemyGroup.create(x, -100, enemySpriteName);
+        } else {
+            console.log(enemy);
+            enemy = game.add.sprite(x, -100, enemySpriteName);
+            //enemyGroup.create(x, -100, enemySpriteName);
+            enemy.animations.add('idle');
+            enemy.animations.play('idle', 30, true);
+            enemyGroup.add(enemy);
+        }
         enemy.scale.set(.7,.7);
         enemy.body.velocity.y = 100;
     }
