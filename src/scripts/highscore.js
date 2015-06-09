@@ -15,7 +15,6 @@ var HighScore = (function (w) {
   }
 
   var setIfHighScore = function (score) {
-    debugger;
     score = parseInt(score || 0);
     var storeScore = this.get();
     if (score > storeScore) {
