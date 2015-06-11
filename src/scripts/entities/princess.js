@@ -20,8 +20,13 @@ var Princess = module.exports = function (gameInstance, x, y, frame) {
         facing: c.CENTER,
         collisions: []
     };
+
     gameInstance.physics.arcade.enable(this);
     gameInstance.add.existing(this);
+
+    this.body.setSize(this.width * 0.4, this.height * 0.8);
+    this.body.collideWorldBounds = true;
+    console.log(this);
     if (gameInstance._debug) {
         gameInstance.debug.body(this);
         window.princess = this;
