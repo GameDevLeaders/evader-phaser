@@ -26,7 +26,6 @@ var Princess = module.exports = function (gameInstance, x, y, frame) {
 
     this.body.setSize(this.width * 0.4, this.height * 0.8);
     this.body.collideWorldBounds = true;
-    console.log(this);
     if (gameInstance._debug) {
         gameInstance.debug.body(this);
         window.princess = this;
