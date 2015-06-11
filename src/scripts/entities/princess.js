@@ -15,7 +15,6 @@ var Princess = module.exports = function (gameInstance, x, y, frame) {
 //    sprite.frame = frame;
     this.anchor.setTo(0.5, 0.5);
     this._data = {
-        lives: c.INITIAL_LIVES,
         fuel: c.MAX_FUEL,
         facing: c.CENTER,
         collisions: []
@@ -58,17 +57,6 @@ Princess.prototype.checkCollision = function checkCollision() {
 };
 
 /*
- * #checkLives
- */
-
-Princess.prototype.checkLives = function checkLives() {
-    if (0 >= this._data.lives) {
-        this.game.state.start('gameOver', true, false, this);
-    }
-    return this;
-};
-
-/*
  * #consumeFuel
  */
 
@@ -83,6 +71,17 @@ Princess.prototype.consumeFuel = function consumeFuel() {
     }
     return this;
 };
+
+/**
+ * Check Fuel
+ */
+Princess.prototype.checkFuel = function() {
+    if (this._data.fuel <= 0) {
+        this.game.state.start('gameOver', true, false, this);
+    }
+
+    return this;
+}
 
 /*
  * #move
@@ -132,8 +131,8 @@ Princess.prototype.registerCollision = function registerCollision(entity, callba
  */
 
 Princess.prototype.update = function update() {
-    return this.checkLives()
-        .consumeFuel()
+    return this.consumeFuel()
+        .checkFuel()
         .checkCollision()
         .reRender();
 };

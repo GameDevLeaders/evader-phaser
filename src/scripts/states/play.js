@@ -30,7 +30,6 @@ play.prototype = {
         this.game.load.image('rotten-cheese', 'assets/sprites/rottencheese.png');
 //        this.game.load.image('lumberjack', 'assets/sprites/lumberjack.png');
         this.game.load.image('wolf', 'assets/sprites/wolf.png');
-        this.game.load.image('heart', 'assets/sprites/dress.png');
         this.game.load.image("background", "assets/sprites/castle-texture.png");
 
         sounds = {
@@ -90,7 +89,7 @@ function create() {
     princess.registerCollision(enemyGroup, function (that, enemy) {
         enemy.kill();
         enemyGroup.remove(enemy);
-        that._data.lives -= 1;
+        that._data.fuel += -15;
     });
     princess.registerCollision(cheeseGroup, function (that, cheese) {
         that.addFuel(cheese.fuel);
@@ -105,15 +104,7 @@ function create() {
 
     this.createEnemies();
 
-    this.hearts = this.game.add.group();
     this.scoreText = this.game.add.text(10, 10, 'Score: ' + this.game._my_world.score, { font: '16px Arial', fill: '#fff' });
-    for (var i = 0; i < 3; i++)
-    {
-        var heart = this.hearts.create(this.game.world.width - 100 + (30 * i), 45, 'heart');
-        heart.scale.set(0.4, 0.4);
-        heart.anchor.setTo(0.5, 0.5);
-        heart.alpha = 0.6;
-    }
     if (this.game._debug) {
         this.game.stage.disableVisibilityChange = true;
         this.game.debug.start();
@@ -227,15 +218,6 @@ function update() {
         enemyGroup.forEachAlive(function (member) {
             this.game.debug.body(member);
         }, this);
-    }
-
-    if(this.hearts.length > princess._data.lives) {
-        var heart = this.hearts.getFirstAlive();
-        if (heart)
-        {
-            heart.kill();
-            this.hearts.remove(heart);
-        }
     }
 }
 
