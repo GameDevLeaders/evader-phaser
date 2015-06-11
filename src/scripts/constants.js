@@ -15,6 +15,5 @@ module.exports = {
     MAX_FUEL                : 100,
     STEP                    : 8,
     RESTORE_FACING_DELAY    : 300,
-    CONSUME_FUEL_DELAY      : 300,
-    INITIAL_LIVES           : 3
+    CONSUME_FUEL_DELAY      : 300
 };
