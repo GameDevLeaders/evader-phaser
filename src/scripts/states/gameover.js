@@ -36,6 +36,7 @@ function gameOverState() {
             );
         text.anchor.set(0.5);
         this.input.onDown.add(startGame, this);
+        this.game.stage.backgroundColor = '#000';
     }
 
     function startGame() {
