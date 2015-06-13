@@ -28,7 +28,6 @@ play.prototype = {
         this.game.load.image('fuel', 'assets/sprites/fuelbar-fill.png');
         this.game.load.image('cheese', 'assets/sprites/cheese.png');
         this.game.load.image('rotten-cheese', 'assets/sprites/rottencheese.png');
-//        this.game.load.image('lumberjack', 'assets/sprites/lumberjack.png');
         this.game.load.image('wolf', 'assets/sprites/wolf.png');
         this.game.load.image("background", "assets/sprites/castle-texture.png");
 
@@ -98,19 +97,21 @@ function create() {
         resetCheese.call(that, cheese);
     });
 
-    fuelContainer = this.game.add.sprite(0,0,'fuel_container');
-    fuelBar = this.game.add.sprite(0,0,'fuel');
-    fuelBar.cropEnabled = true;
-
+    fuelContainer = this.game.add.sprite(5 , 5,'fuel_container');
+    //33, 6 is the diff for the container into the first px to render the bar. 
+    fuelBar = this.game.add.sprite(33 + 5, 6 + 5,'fuel');
+    cropRect = new Phaser.Rectangle(0, 0, fuelBar.width, fuelBar.height);
+    fuelMaxW = fuelBar.width;
+    fuelBar.crop(cropRect);
     this.createEnemies();
 
-    this.scoreText = this.game.add.text(10, 10, 'Score: ' + this.game._my_world.score, { font: '16px Arial', fill: '#fff' });
+//    this.scoreText = this.game.add.text(10, 10, 'Score: ' + this.game._my_world.score, { font: '16px Arial', fill: '#fff' });
     if (this.game._debug) {
         this.game.stage.disableVisibilityChange = true;
         this.game.debug.start();
     }
 }
-
+var cropRect, fuelMaxW;
 function updateEnemies() {
     var game = this.game, enemies = enemyGroup.children;
     for (var i = 0; i < enemies.length; i++) {
@@ -209,10 +210,11 @@ function update() {
     this.checkInputs();
 
     princess.update();
-
-    // TODO - tony - fix this
-    fuelBar.width = (princess._data.fuel / c.MAX_FUEL) * fuelContainer.width;
-    //window.aa = fuelBar;
+    //TODO: tony fix this
+    cropRect.width =  (princess._data.fuel / c.MAX_FUEL) * fuelMaxW;
+    fuelBar.updateCrop();
+    this.game.debug.text(princess._data.fuel + ' / ' + c.MAX_FUEL, 20, fuelBar.height + 5);
+//    fuelBar.width = (princess._data.fuel / c.MAX_FUEL) * fuelContainer.width;
 
     if (this.game._debug) {
         enemyGroup.forEachAlive(function (member) {
@@ -238,7 +240,6 @@ function createEnemies() {
         if(isWolf){
             enemy = enemyGroup.create(x, -100, enemySpriteName);
         } else {
-            console.log(enemy);
             enemy = game.add.sprite(x, -100, enemySpriteName);
             //enemyGroup.create(x, -100, enemySpriteName);
             enemy.animations.add('idle');
