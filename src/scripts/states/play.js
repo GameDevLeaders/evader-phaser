@@ -175,7 +175,7 @@ function updateEnemies() {
 
 function checkInputs(){
     // TODO - Refactor this
-    this.game.turbo = 1;
+    this.game.turbo = 2;
     if (cursors.up.isDown) {
         this.game.turbo = 4;
     }
@@ -289,13 +289,14 @@ function createEnemies() {
 }
 
 function generateXForEnemy(index, game) {
-    if (index === 0) {
-        return 10;
-    } else if (index === 1) {
-        return game.width / 2 - 49;
-    } else {
-        return game.width - 100;
-    }
+    return 10 + index*(game.width/5);
+//    if (index === 0) {
+//        return 10;
+//    } else if (index === 1) {
+//        return game.width / 2 - 49;
+//    } else {
+//        return game.width - 100;
+//    }
 }
 
 function getRandom(min, max) {
