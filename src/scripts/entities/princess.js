@@ -93,9 +93,9 @@ Princess.prototype.move = function move(direction) {
     data.facing = direction;
     // Modify this position
     if (c.LEFT === direction) {
-        this.position.x -= c.STEP;
+        this.position.x -= c.STEP + this.game.turbo;
     } else {
-        this.position.x += c.STEP;
+        this.position.x += c.STEP + this.game.turbo;
     }
     // Clear past timers
     if (timer.facing) {

@@ -1,7 +1,7 @@
 'use strict';
 
 var generator = require('./worldGenerator');
-var lineSize = 3;
+var lineSize = 5;
 var initialDoors = 2;
 var doors = 2;
 var currentLine;
