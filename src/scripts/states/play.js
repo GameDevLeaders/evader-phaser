@@ -83,9 +83,12 @@ function create() {
 //    this._creepers = [];
     //Adding the clouds
     tilesCount = 2;
+    var tile;
     for(var i = 0;i < tilesCount; i++){
         //                                      x                                   ,y         , width   , height  , sprite-name
-        this._bg.push(this.game.add.tileSprite(0, i*this.game.height, this.game.width, this.game.height, 'clouds'));
+        tile = this.game.add.tileSprite(0, i*this.game.height, this.game.width, this.game.height, 'clouds');
+        tile._tileSpeed = 1;
+        this._bg.push(tile);
     }
     tileSize = 320, tilesCount = parseInt(this.game.world.height/tileSize) + 1;
     for(var i = 0;i < tilesCount; i++){
@@ -113,9 +116,12 @@ function create() {
 
     princess = new Princess(this.game, this.game.world.centerX, this.game.height - c.PRINCESS_HEIGHT, 0);
     princess.registerCollision(enemyGroup, function (that, enemy) {
-        enemy.kill();
-        enemyGroup.remove(enemy);
-        that._data.fuel += -15;
+        if(princess._canBeHurt){
+            enemy.kill();
+            enemyGroup.remove(enemy);
+            that._data.fuel += -15;
+            princess._noChoqueMeChocaron();
+        }
     });
     princess.registerCollision(cheeseGroup, function (that, cheese) {
         that.addFuel(cheese.fuel);
@@ -167,7 +173,7 @@ function updateEnemies() {
     }
     else {
         var lastEnemy = enemyGroup.children[enemyGroup.children.length - 1];
-        if (lastEnemy.body.y > lastEnemy.body.height * 2.5) {
+        if (lastEnemy.body.y > lastEnemy.body.height * 6) {
             this.createEnemies();
         }
     }
@@ -179,10 +185,15 @@ function checkInputs(){
     if (cursors.up.isDown) {
         this.game.turbo = 4;
     }
+    else if (cursors.down.isDown) {
+        this.game.turbo = 1;
+    }
     if (cursors.left.isDown) {
         princess.move(c.LEFT);
     } else if (cursors.right.isDown) {
         princess.move(c.RIGHT);
+    } else {
+        princess.move(false);
     }
 }
 function gameOver(){
@@ -233,13 +244,20 @@ function updateEntities(){
     updateScoreX.call(this);
     updateCheeses.call(this);
 }
+
 function update() {
-    var velocity = parseInt(this.game._my_world.velocity / 50);
+    var velocity = parseInt(this.game._my_world.velocity / 50), tile;
     if(this.game.turbo == 4) {
         velocity += velocity;
     }
     for(var i = 0, len = this._bg.length; i< len; i++){
-        this._bg[i].tilePosition.y += velocity
+        //_tileSpeed
+        tile = this._bg[i];
+        if(tile._tileSpeed){
+            tile.tilePosition.y += tile._tileSpeed
+        }else{
+            tile.tilePosition.y += velocity
+        }
     }
 
     this.game._my_world.update();
@@ -289,7 +307,7 @@ function createEnemies() {
 }
 
 function generateXForEnemy(index, game) {
-    return 10 + index*(game.width/5);
+    return index*(15 + game.width/5);
 //    if (index === 0) {
 //        return 10;
 //    } else if (index === 1) {

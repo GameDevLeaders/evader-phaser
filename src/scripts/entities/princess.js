@@ -23,12 +23,13 @@ var Princess = module.exports = function (gameInstance, x, y, frame) {
     gameInstance.physics.arcade.enable(this);
     gameInstance.add.existing(this);
 
-    this.body.setSize(this.width * 0.4, this.height * 0.8);
+    this.body.setSize(this.width * 0.4, this.height * 0.7);
     this.body.collideWorldBounds = true;
     if (gameInstance._debug) {
         gameInstance.debug.body(this);
         window.princess = this;
     }
+    this._canBeHurt = true;
 };
 
 Princess.prototype = Object.create(Phaser.Sprite.prototype);
@@ -85,17 +86,28 @@ Princess.prototype.checkFuel = function() {
 
 /*
  * #move
- */
-
+ */ 
+function time(){
+    return new Date().getTime();
+}
+var lastTime = time(), lastDirection = false;
 Princess.prototype.move = function move(direction) {
     // Set new facing direction
-    var data = this._data;
+    var data = this._data, timePressedFactor;
     data.facing = direction;
     // Modify this position
+    if(lastDirection != direction){
+        lastTime = time();
+        lastDirection = direction;
+    }
+    if(!direction){
+        return;
+    }
+    timePressedFactor = ((time() - lastTime) / 300);
     if (c.LEFT === direction) {
-        this.position.x -= c.STEP + this.game.turbo;
+        this.position.x -= c.STEP * timePressedFactor * (this.game.turbo/2);
     } else {
-        this.position.x += c.STEP + this.game.turbo;
+        this.position.x += c.STEP * timePressedFactor * (this.game.turbo/2);
     }
     // Clear past timers
     if (timer.facing) {
@@ -107,6 +119,21 @@ Princess.prototype.move = function move(direction) {
         data.facing = c.CENTER;
     }, c.RESTORE_FACING_DELAY);
     return this;
+};
+
+var blinkCounter = 0, interval;
+function blink(princess){
+    princess.visible = !princess.visible;
+    if(++blinkCounter >= 12){
+        clearInterval(interval);
+        princess.visible = true;
+        princess._canBeHurt = true;
+    }
+}
+Princess.prototype._noChoqueMeChocaron = function _noChoqueMeChocaron(){
+    this._canBeHurt = false;
+    blinkCounter = 0;
+    interval = setInterval(blink, 100, this);
 };
 
 /*
