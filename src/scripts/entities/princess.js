@@ -78,7 +78,8 @@ Princess.prototype.consumeFuel = function consumeFuel() {
  */
 Princess.prototype.checkFuel = function() {
     if (this._data.fuel <= 0) {
-        this.game.state.start('gameOver', true, false, this);
+        //this.game.state.start('gameOver', true, false, this);
+        this.game.gameOver.call(this);
     }
 
     return this;
@@ -99,15 +100,19 @@ Princess.prototype.move = function move(direction) {
     if(lastDirection != direction){
         lastTime = time();
         lastDirection = direction;
+        //this.body.gravity.x = 0;
     }
     if(!direction){
+        //this.body.gravity.x = 0;
         return;
     }
-    timePressedFactor = ((time() - lastTime) / 300);
+    //timePressedFactor = 1 + ((time() - lastTime) / 300);
     if (c.LEFT === direction) {
-        this.position.x -= c.STEP * timePressedFactor * (this.game.turbo/2);
-    } else {
-        this.position.x += c.STEP * timePressedFactor * (this.game.turbo/2);
+        //this.body.gravity.x = -1;
+        this.body.position.x -= c.STEP * this.game.turbo/1.5;
+    } else if(c.RIGHT === direction) {
+        //this.body.gravity.x = 1;
+        this.body.position.x += c.STEP * this.game.turbo/1.5;
     }
     // Clear past timers
     if (timer.facing) {
@@ -124,7 +129,7 @@ Princess.prototype.move = function move(direction) {
 var blinkCounter = 0, interval;
 function blink(princess){
     princess.visible = !princess.visible;
-    if(++blinkCounter >= 12){
+    if(++blinkCounter >= 20){
         clearInterval(interval);
         princess.visible = true;
         princess._canBeHurt = true;
