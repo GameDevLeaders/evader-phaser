@@ -109,10 +109,10 @@ Princess.prototype.move = function move(direction) {
     //timePressedFactor = 1 + ((time() - lastTime) / 300);
     if (c.LEFT === direction) {
         //this.body.gravity.x = -1;
-        this.body.position.x -= c.STEP * this.game.turbo;
+        this.body.position.x -= c.STEP * this.game.turbo/1.5;
     } else if(c.RIGHT === direction) {
         //this.body.gravity.x = 1;
-        this.body.position.x += c.STEP * this.game.turbo;
+        this.body.position.x += c.STEP * this.game.turbo/1.5;
     }
     // Clear past timers
     if (timer.facing) {
