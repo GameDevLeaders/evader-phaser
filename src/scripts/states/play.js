@@ -40,6 +40,13 @@ play.prototype = {
         sounds = {
                 dies: game.add.audio('explosion')
         };
+        function gameOver(state){
+            //console.log(sounds.dies);
+            sounds.dies.play(); // PLEASE !!
+            this.game.state.start('gameOver', true, false, this);
+            return;
+        }
+        this.game.gameOver = gameOver;
     },
     create: create,
     update: update,
@@ -87,7 +94,7 @@ function create() {
     for(var i = 0;i < tilesCount; i++){
         //                                      x                                   ,y         , width   , height  , sprite-name
         tile = this.game.add.tileSprite(0, i*this.game.height, this.game.width, this.game.height, 'clouds');
-        tile._tileSpeed = 1;
+        tile._tileSpeed = 0.2;
         this._bg.push(tile);
     }
     tileSize = 320, tilesCount = parseInt(this.game.world.height/tileSize) + 1;
@@ -183,7 +190,7 @@ function checkInputs(){
     // TODO - Refactor this
     this.game.turbo = 2;
     if (cursors.up.isDown) {
-        this.game.turbo = 4;
+        this.game.turbo = 6;
     }
     else if (cursors.down.isDown) {
         this.game.turbo = 1;
@@ -196,12 +203,9 @@ function checkInputs(){
         princess.move(false);
     }
 }
-function gameOver(){
-    console.log(sounds.dies);
-    //sounds.dies.play(); // PLEASE !!
-    this.game.state.start('gameOver', true, false, this);
-    return;
-}
+
+
+
 
 function resetCheese(currentCheese){
     currentCheese.y = -100 - 10 * Math.floor( Math.random() * 10 );

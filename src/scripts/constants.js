@@ -11,11 +11,11 @@ module.exports = {
     RIGHT   : 1, // 001
 
     /***** player *****/
-    MAX_VELOCITY            : 800,
-    MAX_FUEL                : 100,
+    MAX_VELOCITY            : 700,
+    MAX_FUEL                : 1,
     STEP                    : 9,
     RESTORE_FACING_DELAY    : 300,
-    CONSUME_FUEL_DELAY      : 300,
+    CONSUME_FUEL_DELAY      : 250,
     
     /***** player sprite *****/
     PRINCESS_WIDTH: 100,
