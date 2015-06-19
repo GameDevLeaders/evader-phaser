@@ -8,33 +8,35 @@ gameOver.prototype = gameOverState();
 
 function gameOverState() {
     return {
+        preload: preload,
         create: create,
-        init: init,
-        scoreText: null,
+        init: init
     };
+
+    function preload() {
+        this.game.load.bitmapFont('scoreFont', 'assets/fonts/bitmapFonts/carrier_command.png', 'assets/fonts/bitmapFonts/carrier_command.xml');
+    }
+
     function init(state){
         this.score = state.score;
         HighScore.setIfHighScore(this.game._my_world.score);
     }
+
     function create() {
-        console.log(this.game.add.text);
-        var style = { font: "15px Arial", fill: "#00ff00", align: "center" }, scoreText;
-        var text = this.game.add.text(
-            this.game.world.centerX,
-            this.game.world.centerY + 20,
-            "Game Over\nClick to start again...",
-            style
-        );
+        this.game.add.bitmapText(this.game.world.centerX - 200, this.game.world.centerY-100, 'scoreFont', 'Game Over', 12);
+        this.game.add.bitmapText(this.game.world.centerX - 200, this.game.world.centerY-80, 'scoreFont', 'Press space to start again', 12);
+
         // TODO - tony - temporal approach
-        scoreText = "Score: " + this.game._my_world.score;
-        scoreText += "\n Your HighScore: " + HighScore.get();
-        this.scoreText = this.game.add.text(
-                (this.game.width/2) - (scoreText.length*3),
-                this.game.world.centerY - 55,
-                scoreText,
-                style
-            );
-        text.anchor.set(0.5);
+        var scoreText = "Score: " + this.game._my_world.score;
+        var highScoreText = "Your HighScore: " + HighScore.get();
+        this.game.add.bitmapText(this.game.world.centerX - 200, this.game.world.centerY-60, 'scoreFont', scoreText, 12);
+        this.game.add.bitmapText(this.game.world.centerX - 200, this.game.world.centerY-40, 'scoreFont', highScoreText, 12);
+
+        var spaceBarKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        spaceBarKey.onDown.add(startGame, this);
+
+        this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
+
         this.input.onDown.add(startGame, this);
         this.game.stage.backgroundColor = '#000';
     }

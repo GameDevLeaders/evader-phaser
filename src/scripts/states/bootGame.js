@@ -6,19 +6,25 @@ bootGame.prototype = bootGameState();
 
 function bootGameState() {
     return {
+        preload: preload,
         create: create
     };
 
-    function create() {
-        var style = { font: "15px Arial", fill: "#00ff00", align: "center" };
-        var text = this.game.add.text(
-            this.game.world.centerX,
-            this.game.world.centerY,
-            "Welcome!!\nClick to start playing",
-            style
-        );
+    function preload() {
+        this.game.load.bitmapFont('scoreFont', 'assets/fonts/bitmapFonts/carrier_command.png', 'assets/fonts/bitmapFonts/carrier_command.xml');
+        this.game.load.image('logo', 'assets/logo.png');
+    }
 
-        text.anchor.set(0.5);
+    function create() {
+
+        this.game.add.bitmapText(this.game.world.centerX - 140, this.game.world.centerY, 'scoreFont', 'Press space...', 12);
+        var logo = this.game.add.sprite(0, 0, 'logo');
+        logo.scale.set(.5,.5);
+
+        var spaceBarKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        spaceBarKey.onDown.add(startGame, this);
+
+        this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
         this.input.onDown.add(startGame, this);
     }
 
