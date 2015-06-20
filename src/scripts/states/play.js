@@ -10,9 +10,11 @@ var cursors,
     fuelBar,
     cheese,
     rottenCheese,
-    sounds, 
+    sounds,
     cropRect,
-    fuelMaxW;
+    fuelMaxW,
+    enemiesPerLine;
+
 var play = function(game) {};
 
 play.prototype = {
@@ -41,8 +43,7 @@ play.prototype = {
                 dies: game.add.audio('explosion')
         };
         function gameOver(state){
-            //console.log(sounds.dies);
-            sounds.dies.play(); // PLEASE !!
+            //sounds.dies.play(); // PLEASE !!
             this.game.state.start('gameOver', true, false, this);
             return;
         }
@@ -80,9 +81,15 @@ function createCheeses(){
 function create() {
     var that = this, tileSize = 0, tilesCount = 0;
 
+    enemiesPerLine = Math.ceil(this.game.width / 180);
+    enemiesPerLine = enemiesPerLine < 3 ? 3 : enemiesPerLine;
+
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game._debug = false;
-    this.game._my_world = new World();
+    this.game._my_world = new World({
+        lineSize: enemiesPerLine
+    });
+
 //    console.log(this.game.world.width);
     //TODO: Mover el bg a world.js/Background.js ?
     this._bg = [];
@@ -138,7 +145,7 @@ function create() {
     });
 
     fuelContainer = this.game.add.sprite(5 , 5,'fuel_container');
-    //33, 6 is the diff for the container into the first px to render the bar. 
+    //33, 6 is the diff for the container into the first px to render the bar.
     fuelBar = this.game.add.sprite(33 + 5, 6 + 5,'fuel');
     cropRect = new Phaser.Rectangle(0, 0, fuelBar.width, fuelBar.height);
     fuelMaxW = fuelBar.width;
@@ -159,7 +166,7 @@ function updateScoreX(){
 }
 function addScore(points){
     this.game._my_world.score += points;
-    this.scoreText.text = this.game._my_world.score
+    this.scoreText.text = this.game._my_world.score;
     updateScoreX.call(this);
 }
 function updateEnemies() {
@@ -283,7 +290,7 @@ function update() {
 }
 
 function createEnemies() {
-    var game = this.game, 
+    var game = this.game,
         line = this.game._my_world.getLine(),
         isWolf = getRandom(0, 3) === 0,
         enemySpriteName = isWolf ? 'wolf' : 'lumberjack',
@@ -311,14 +318,7 @@ function createEnemies() {
 }
 
 function generateXForEnemy(index, game) {
-    return index*(15 + game.width/5);
-//    if (index === 0) {
-//        return 10;
-//    } else if (index === 1) {
-//        return game.width / 2 - 49;
-//    } else {
-//        return game.width - 100;
-//    }
+    return index * (15 + game.width / enemiesPerLine);
 }
 
 function getRandom(min, max) {
