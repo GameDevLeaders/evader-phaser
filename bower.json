@@ -3,9 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "devDependencies": {
-    "phaser": "latest"
-  },
-  "dependencies": {
+    "phaser": "latest",
     "phaser-touch-control-plugin": "*"
   }
 }

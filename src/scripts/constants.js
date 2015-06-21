@@ -28,4 +28,10 @@ module.exports = {
     LUMBERJACK_WIDTH: 168,
     LUMBERJACK_HEIGHT: 124,
     LUMBERJACK_SPRITES: 2,
+
+    /***** hand sprite *****/
+    MOVE_DELAY : 10,
+    DELAY_BETWEEN_ANIMATIONS: 500,
+    ANIMATION_LENGTH: 1000
+
 };

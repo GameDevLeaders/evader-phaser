@@ -121,7 +121,8 @@ gulp.task('build:vendors', function () {
   var bowerConfig = JSON.parse(fs.readFileSync('./.bowerrc', 'utf8'));
   var routes = [
       './' + bowerConfig['directory'] + '/phaser/build/phaser*',
-      './' + bowerConfig['directory'] + '/phaser-touch-control-plugin/src/phaser*'
+      './' + bowerConfig['directory'] + '/phaser-touch-control-plugin/src/phaser*',
+      './' + bowerConfig['directory'] + '/q/q.js'
   ];
 
   return gulp.src(routes)
