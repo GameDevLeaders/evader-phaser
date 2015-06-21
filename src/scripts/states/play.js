@@ -23,6 +23,9 @@ play.prototype = {
         //sounds
         this.game.load.audio('explosion', 'assets/audio/dies.wav');
         //sprites
+        this.game.load.image('compass', 'assets/nothing.png');
+        this.game.load.image('touch_segment', 'assets/nothing.png');
+        this.game.load.image('touch', 'assets/nothing.png');
         this.game.load.spritesheet('princess', 'assets/sprites/princess.png', c.PRINCESS_WIDTH,  c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
         this.game.load.spritesheet('lumberjack', 'assets/sprites/lumberjack-s.png', c.LUMBERJACK_WIDTH,  c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);
         this.game.load.image('princess_center', 'assets/sprites/princess-back.png');
@@ -126,8 +129,6 @@ function create() {
     enemyGroup = this.game.add.group();
     enemyGroup.enableBody = true;
 
-    cursors = this.game.input.keyboard.createCursorKeys();
-
     princess = new Princess(this.game, this.game.world.centerX, this.game.height - c.PRINCESS_HEIGHT, 0);
     princess.registerCollision(enemyGroup, function (that, enemy) {
         if(princess._canBeHurt){
@@ -159,6 +160,19 @@ function create() {
     }
 
     this.game.stage.backgroundColor = '#39c7fc';
+
+    this.game.turbo = 2;
+
+    cursors = this.game.input.keyboard.createCursorKeys();
+
+    this.game.touchControl = this.game.plugins.add(Phaser.Plugin.TouchControl);
+    this.game.touchControl.inputEnable();
+    this.game.touchControl.settings.maxDistanceInPixels = 100;
+    this.game.touchControl.settings.singleDirection = true;
+
+    this.game.touchControl.imageGroup.forEach(function (e) {
+        e.scale.setTo(0.75, 0.75);
+    });
 }
 function updateScoreX(){
     //TODO: Refactor this to force right side align
@@ -193,26 +207,38 @@ function updateEnemies() {
     }
 }
 
-function checkInputs(){
-    // TODO - Refactor this
-    this.game.turbo = 2;
-    if (cursors.up.isDown) {
+// TODO - Refactor this - this should be on princess.js -__-
+var timers = {};
+var canTurbo = true;
+
+function checkInputs() {
+    var that = this;
+
+    if (canTurbo && (cursors.up.isDown || c.SLIDE_DISTANCE < this.game.touchControl.speed.y)) {
+        timers.turbo = setTimeout(function () {
+            that.game.turbo = 2;
+            canTurbo = true;
+        }, c.TURBO_DELAY);
         this.game.turbo = 6;
+        canTurbo = false;
     }
-    else if (cursors.down.isDown) {
+    else if (canTurbo && (cursors.down.isDown || -c.SLIDE_DISTANCE > this.game.touchControl.speed.y)) {
+        timers.turbo = setTimeout(function () {
+            that.game.turbo = 2;
+            canTurbo = true;
+        }, c.TURBO_DELAY);
         this.game.turbo = 1;
+        canTurbo = false;
     }
-    if (cursors.left.isDown) {
+
+    if (cursors.left.isDown || c.SLIDE_DISTANCE < this.game.touchControl.speed.x) {
         princess.move(c.LEFT);
-    } else if (cursors.right.isDown) {
+    } else if (cursors.right.isDown || -c.SLIDE_DISTANCE > this.game.touchControl.speed.x) {
         princess.move(c.RIGHT);
     } else {
         princess.move(false);
     }
 }
-
-
-
 
 function resetCheese(currentCheese){
     currentCheese.y = -100 - 10 * Math.floor( Math.random() * 10 );
@@ -276,7 +302,6 @@ function update() {
 
     this.checkInputs();
     princess.update();
-    //TODO: tony fix this
     cropRect.width =  (princess._data.fuel / c.MAX_FUEL) * fuelMaxW;
     fuelBar.updateCrop();
     //this.game.debug.text(princess._data.fuel + ' / ' + c.MAX_FUEL, 20, fuelBar.height + 5);

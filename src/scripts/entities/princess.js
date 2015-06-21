@@ -76,7 +76,7 @@ Princess.prototype.consumeFuel = function consumeFuel() {
 /**
  * Check Fuel
  */
-Princess.prototype.checkFuel = function() {
+Princess.prototype.checkFuel = function () {
     if (this._data.fuel <= 0) {
         //this.game.state.start('gameOver', true, false, this);
         this.game.gameOver.call(this);
@@ -87,32 +87,27 @@ Princess.prototype.checkFuel = function() {
 
 /*
  * #move
- */ 
-function time(){
+ */
+function time() {
     return new Date().getTime();
 }
 var lastTime = time(), lastDirection = false;
 Princess.prototype.move = function move(direction) {
     // Set new facing direction
-    var data = this._data, timePressedFactor;
+    var data = this._data;
     data.facing = direction;
     // Modify this position
-    if(lastDirection != direction){
+    if (lastDirection != direction) {
         lastTime = time();
         lastDirection = direction;
-        //this.body.gravity.x = 0;
     }
-    if(!direction){
-        //this.body.gravity.x = 0;
+    if (!direction) {
         return;
     }
-    //timePressedFactor = 1 + ((time() - lastTime) / 300);
     if (c.LEFT === direction) {
-        //this.body.gravity.x = -1;
-        this.body.position.x -= c.STEP * this.game.turbo/1.5;
-    } else if(c.RIGHT === direction) {
-        //this.body.gravity.x = 1;
-        this.body.position.x += c.STEP * this.game.turbo/1.5;
+        this.body.position.x -= c.STEP * 1.5;
+    } else if (c.RIGHT === direction) {
+        this.body.position.x += c.STEP * 1.5;
     }
     // Clear past timers
     if (timer.facing) {
@@ -127,15 +122,15 @@ Princess.prototype.move = function move(direction) {
 };
 
 var blinkCounter = 0, interval;
-function blink(princess){
+function blink(princess) {
     princess.visible = !princess.visible;
-    if(++blinkCounter >= 20){
+    if (++blinkCounter >= 20) {
         clearInterval(interval);
         princess.visible = true;
         princess._canBeHurt = true;
     }
 }
-Princess.prototype._noChoqueMeChocaron = function _noChoqueMeChocaron(){
+Princess.prototype._noChoqueMeChocaron = function _noChoqueMeChocaron() {
     this._canBeHurt = false;
     blinkCounter = 0;
     interval = setInterval(blink, 100, this);
@@ -178,18 +173,9 @@ Princess.prototype.reRender = function reRender() {
     var facing = this._data.facing;
     if (c.LEFT === facing) {
         this.frame = 1;
-//        this.loadTexture('princess_left');
-//        this.body.setSize(45, 100, 8, 0);
-//        this.scale.x = -1;
     } else if (c.RIGHT === facing) {
         this.frame = 2;
-//        this.loadTexture('princess_left');
-//        this.body.setSize(45, 100, -8, 0);
-//        this.scale.x = 1;
     } else {
-//        this.loadTexture('princess_center');
-//        this.body.setSize(45, 100, -3, 0);
-//        this.scale.x = 2;
         this.frame = 0;
     }
     // Render collision box

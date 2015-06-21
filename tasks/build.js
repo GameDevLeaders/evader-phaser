@@ -119,8 +119,12 @@ gulp.task('build:css', function () {
 
 gulp.task('build:vendors', function () {
   var bowerConfig = JSON.parse(fs.readFileSync('./.bowerrc', 'utf8'));
+  var routes = [
+      './' + bowerConfig['directory'] + '/phaser/build/phaser*',
+      './' + bowerConfig['directory'] + '/phaser-touch-control-plugin/src/phaser*'
+  ];
 
-  return gulp.src('./' + bowerConfig['directory'] + '/phaser/build/phaser*')
+  return gulp.src(routes)
     .pipe(ignore('*.ts'))
     .pipe(gulp.dest('./build/js/'));
 });
