@@ -146,8 +146,8 @@ function create() {
     });
 
     fuelContainer = this.game.add.sprite(5 , 5,'fuel_container');
-    //33, 6 is the diff for the container into the first px to render the bar.
-    fuelBar = this.game.add.sprite(33 + 5, 6 + 5,'fuel');
+    //30, 5 is the diff for the container into the first px to render the bar.
+    fuelBar = this.game.add.sprite(30 + 5, 5 + 5,'fuel');
     cropRect = new Phaser.Rectangle(0, 0, fuelBar.width, fuelBar.height);
     fuelMaxW = fuelBar.width;
     fuelBar.crop(cropRect);
@@ -304,8 +304,6 @@ function update() {
     princess.update();
     cropRect.width =  (princess._data.fuel / c.MAX_FUEL) * fuelMaxW;
     fuelBar.updateCrop();
-    //this.game.debug.text(princess._data.fuel + ' / ' + c.MAX_FUEL, 20, fuelBar.height + 5);
-//    fuelBar.width = (princess._data.fuel / c.MAX_FUEL) * fuelContainer.width;
 
     if (this.game._debug) {
         enemyGroup.forEachAlive(function (member) {
