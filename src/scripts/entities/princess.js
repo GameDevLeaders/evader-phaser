@@ -2,6 +2,7 @@
 
 var c = require('../constants');
 var timer = {};
+var emitter;
 
 /*
  * #Princess
@@ -10,9 +11,7 @@ var timer = {};
 var Princess = module.exports = function (gameInstance, x, y, frame) {
     console.assert(gameInstance, 'You should provide a gameInstance instance to this Sprite [Princess]');
     Phaser.Sprite.call(this, gameInstance, x, y, 'princess');
-    //console.log('x', x);
-//    sprite = gameInstance.add.sprite(gameInstance.width/2 - 50, gameInstance.height - 140, 'princess');
-//    sprite.frame = frame;
+
     this.anchor.setTo(0.5, 0.5);
     this._data = {
         fuel: c.MAX_FUEL,
@@ -30,6 +29,13 @@ var Princess = module.exports = function (gameInstance, x, y, frame) {
         window.princess = this;
     }
     this._canBeHurt = true;
+
+    emitter = gameInstance.add.emitter(gameInstance.world.centerX, gameInstance.world.centerY, 400);
+    emitter.makeParticles(['fire1', 'fire2', 'fire3', 'smoke']);
+    emitter.gravity = 300;
+    emitter.setAlpha(1, 0, 3000);
+    emitter.setScale(0.2, 0, 0.2, 0, 3000);
+    emitter.start(false, 3000, 5);
 };
 
 Princess.prototype = Object.create(Phaser.Sprite.prototype);
@@ -78,12 +84,10 @@ Princess.prototype.consumeFuel = function consumeFuel() {
  */
 Princess.prototype.checkFuel = function () {
     if (this._data.fuel <= 0) {
-        //this.game.state.start('gameOver', true, false, this);
         this.game.gameOver.call(this);
     }
-
     return this;
-}
+};
 
 /*
  * #move
@@ -158,6 +162,22 @@ Princess.prototype.registerCollision = function registerCollision(entity, callba
  */
 
 Princess.prototype.update = function update() {
+    emitter.minParticleSpeed.set(0, 100);
+    emitter.maxParticleSpeed.set(0, 200);
+
+    emitter.emitX = this.position.x - 4;
+    emitter.emitY = this.position.y;
+
+    if (this.game.turbo == 6) {
+        emitter.gravity = 600;
+        emitter.setScale(0.5, 0, 0.5, 0, 2000);
+    } else if (this.game.turbo == 1) {
+        emitter.setScale(0.1, 0, 0.1, 0, 300);
+    } else {
+        emitter.gravity = 300;
+        emitter.setScale(0.2, 0, 0.2, 0, 1000);
+    }
+
     return this.consumeFuel()
         .checkFuel()
         .checkCollision()

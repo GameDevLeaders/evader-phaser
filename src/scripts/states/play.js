@@ -40,7 +40,11 @@ play.prototype = {
         this.game.load.image("creeperL", "assets/sprites/enredadera-izq.png");
         this.game.load.image("creeperR", "assets/sprites/enredadera-der.png");
         this.game.load.bitmapFont('scoreFont', 'assets/fonts/bitmapFonts/carrier_command.png', 'assets/fonts/bitmapFonts/carrier_command.xml');
-//        this.game.load.image('scoreFont', 'assets/fonts/retroFonts/165.png');
+
+        this.game.load.image('fire1', 'assets/fire1.png');
+        this.game.load.image('fire2', 'assets/fire2.png');
+        this.game.load.image('fire3', 'assets/fire3.png');
+        this.game.load.image('smoke', 'assets/smoke-puff.png');
 
         sounds = {
                 dies: game.add.audio('explosion')
@@ -284,6 +288,7 @@ function updateEntities(){
 
 function update() {
     var velocity = parseInt(this.game._my_world.velocity / 50), tile;
+
     if(this.game.turbo == 4) {
         velocity += velocity;
     }
