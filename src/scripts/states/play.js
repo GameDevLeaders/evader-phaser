@@ -10,9 +10,11 @@ var cursors,
     fuelBar,
     cheese,
     rottenCheese,
-    sounds, 
+    sounds,
     cropRect,
-    fuelMaxW;
+    fuelMaxW,
+    enemiesPerLine;
+
 var play = function(game) {};
 
 play.prototype = {
@@ -21,6 +23,9 @@ play.prototype = {
         //sounds
         this.game.load.audio('explosion', 'assets/audio/dies.wav');
         //sprites
+        this.game.load.image('compass', 'assets/nothing.png');
+        this.game.load.image('touch_segment', 'assets/nothing.png');
+        this.game.load.image('touch', 'assets/nothing.png');
         this.game.load.spritesheet('princess', 'assets/sprites/princess.png', c.PRINCESS_WIDTH,  c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
         this.game.load.spritesheet('lumberjack', 'assets/sprites/lumberjack-s.png', c.LUMBERJACK_WIDTH,  c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);
         this.game.load.image('princess_center', 'assets/sprites/princess-back.png');
@@ -35,14 +40,17 @@ play.prototype = {
         this.game.load.image("creeperL", "assets/sprites/enredadera-izq.png");
         this.game.load.image("creeperR", "assets/sprites/enredadera-der.png");
         this.game.load.bitmapFont('scoreFont', 'assets/fonts/bitmapFonts/carrier_command.png', 'assets/fonts/bitmapFonts/carrier_command.xml');
-//        this.game.load.image('scoreFont', 'assets/fonts/retroFonts/165.png');
+
+        this.game.load.image('fire1', 'assets/fire1.png');
+        this.game.load.image('fire2', 'assets/fire2.png');
+        this.game.load.image('fire3', 'assets/fire3.png');
+        this.game.load.image('smoke', 'assets/smoke-puff.png');
 
         sounds = {
                 dies: game.add.audio('explosion')
         };
         function gameOver(state){
-            //console.log(sounds.dies);
-            sounds.dies.play(); // PLEASE !!
+            //sounds.dies.play(); // PLEASE !!
             this.game.state.start('gameOver', true, false, this);
             return;
         }
@@ -80,9 +88,15 @@ function createCheeses(){
 function create() {
     var that = this, tileSize = 0, tilesCount = 0;
 
+    enemiesPerLine = Math.ceil(this.game.width / 180);
+    enemiesPerLine = enemiesPerLine < 3 ? 3 : enemiesPerLine;
+
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game._debug = false;
-    this.game._my_world = new World();
+    this.game._my_world = new World({
+        lineSize: enemiesPerLine
+    });
+
 //    console.log(this.game.world.width);
     //TODO: Mover el bg a world.js/Background.js ?
     this._bg = [];
@@ -119,8 +133,6 @@ function create() {
     enemyGroup = this.game.add.group();
     enemyGroup.enableBody = true;
 
-    cursors = this.game.input.keyboard.createCursorKeys();
-
     princess = new Princess(this.game, this.game.world.centerX, this.game.height - c.PRINCESS_HEIGHT, 0);
     princess.registerCollision(enemyGroup, function (that, enemy) {
         if(princess._canBeHurt){
@@ -138,8 +150,8 @@ function create() {
     });
 
     fuelContainer = this.game.add.sprite(5 , 5,'fuel_container');
-    //33, 6 is the diff for the container into the first px to render the bar. 
-    fuelBar = this.game.add.sprite(33 + 5, 6 + 5,'fuel');
+    //30, 5 is the diff for the container into the first px to render the bar.
+    fuelBar = this.game.add.sprite(30 + 5, 5 + 5,'fuel');
     cropRect = new Phaser.Rectangle(0, 0, fuelBar.width, fuelBar.height);
     fuelMaxW = fuelBar.width;
     fuelBar.crop(cropRect);
@@ -152,6 +164,19 @@ function create() {
     }
 
     this.game.stage.backgroundColor = '#39c7fc';
+
+    this.game.turbo = 2;
+
+    cursors = this.game.input.keyboard.createCursorKeys();
+
+    this.game.touchControl = this.game.plugins.add(Phaser.Plugin.TouchControl);
+    this.game.touchControl.inputEnable();
+    this.game.touchControl.settings.maxDistanceInPixels = 100;
+    this.game.touchControl.settings.singleDirection = true;
+
+    this.game.touchControl.imageGroup.forEach(function (e) {
+        e.scale.setTo(0.75, 0.75);
+    });
 }
 function updateScoreX(){
     //TODO: Refactor this to force right side align
@@ -159,7 +184,7 @@ function updateScoreX(){
 }
 function addScore(points){
     this.game._my_world.score += points;
-    this.scoreText.text = this.game._my_world.score
+    this.scoreText.text = this.game._my_world.score;
     updateScoreX.call(this);
 }
 function updateEnemies() {
@@ -186,26 +211,38 @@ function updateEnemies() {
     }
 }
 
-function checkInputs(){
-    // TODO - Refactor this
-    this.game.turbo = 2;
-    if (cursors.up.isDown) {
+// TODO - Refactor this - this should be on princess.js -__-
+var timers = {};
+var canTurbo = true;
+
+function checkInputs() {
+    var that = this;
+
+    if (canTurbo && (cursors.up.isDown || c.SLIDE_DISTANCE < this.game.touchControl.speed.y)) {
+        timers.turbo = setTimeout(function () {
+            that.game.turbo = 2;
+            canTurbo = true;
+        }, c.TURBO_DELAY);
         this.game.turbo = 6;
+        canTurbo = false;
     }
-    else if (cursors.down.isDown) {
+    else if (canTurbo && (cursors.down.isDown || -c.SLIDE_DISTANCE > this.game.touchControl.speed.y)) {
+        timers.turbo = setTimeout(function () {
+            that.game.turbo = 2;
+            canTurbo = true;
+        }, c.TURBO_DELAY);
         this.game.turbo = 1;
+        canTurbo = false;
     }
-    if (cursors.left.isDown) {
+
+    if (cursors.left.isDown || c.SLIDE_DISTANCE < this.game.touchControl.speed.x) {
         princess.move(c.LEFT);
-    } else if (cursors.right.isDown) {
+    } else if (cursors.right.isDown || -c.SLIDE_DISTANCE > this.game.touchControl.speed.x) {
         princess.move(c.RIGHT);
     } else {
         princess.move(false);
     }
 }
-
-
-
 
 function resetCheese(currentCheese){
     currentCheese.y = -100 - 10 * Math.floor( Math.random() * 10 );
@@ -251,6 +288,7 @@ function updateEntities(){
 
 function update() {
     var velocity = parseInt(this.game._my_world.velocity / 50), tile;
+
     if(this.game.turbo == 4) {
         velocity += velocity;
     }
@@ -269,11 +307,8 @@ function update() {
 
     this.checkInputs();
     princess.update();
-    //TODO: tony fix this
     cropRect.width =  (princess._data.fuel / c.MAX_FUEL) * fuelMaxW;
     fuelBar.updateCrop();
-    //this.game.debug.text(princess._data.fuel + ' / ' + c.MAX_FUEL, 20, fuelBar.height + 5);
-//    fuelBar.width = (princess._data.fuel / c.MAX_FUEL) * fuelContainer.width;
 
     if (this.game._debug) {
         enemyGroup.forEachAlive(function (member) {
@@ -283,7 +318,7 @@ function update() {
 }
 
 function createEnemies() {
-    var game = this.game, 
+    var game = this.game,
         line = this.game._my_world.getLine(),
         isWolf = getRandom(0, 3) === 0,
         enemySpriteName = isWolf ? 'wolf' : 'lumberjack',
@@ -311,14 +346,7 @@ function createEnemies() {
 }
 
 function generateXForEnemy(index, game) {
-    return index*(15 + game.width/5);
-//    if (index === 0) {
-//        return 10;
-//    } else if (index === 1) {
-//        return game.width / 2 - 49;
-//    } else {
-//        return game.width - 100;
-//    }
+    return index * (15 + game.width / enemiesPerLine);
 }
 
 function getRandom(min, max) {

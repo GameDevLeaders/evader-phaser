@@ -2,6 +2,7 @@
 
 var c = require('../constants');
 var timer = {};
+var emitter;
 
 /*
  * #Princess
@@ -10,9 +11,7 @@ var timer = {};
 var Princess = module.exports = function (gameInstance, x, y, frame) {
     console.assert(gameInstance, 'You should provide a gameInstance instance to this Sprite [Princess]');
     Phaser.Sprite.call(this, gameInstance, x, y, 'princess');
-    //console.log('x', x);
-//    sprite = gameInstance.add.sprite(gameInstance.width/2 - 50, gameInstance.height - 140, 'princess');
-//    sprite.frame = frame;
+
     this.anchor.setTo(0.5, 0.5);
     this._data = {
         fuel: c.MAX_FUEL,
@@ -30,6 +29,13 @@ var Princess = module.exports = function (gameInstance, x, y, frame) {
         window.princess = this;
     }
     this._canBeHurt = true;
+
+    emitter = gameInstance.add.emitter(gameInstance.world.centerX, gameInstance.world.centerY, 400);
+    emitter.makeParticles(['fire1', 'fire2', 'fire3', 'smoke']);
+    emitter.gravity = 300;
+    emitter.setAlpha(1, 0, 3000);
+    emitter.setScale(0.2, 0, 0.2, 0, 3000);
+    emitter.start(false, 3000, 5);
 };
 
 Princess.prototype = Object.create(Phaser.Sprite.prototype);
@@ -76,43 +82,36 @@ Princess.prototype.consumeFuel = function consumeFuel() {
 /**
  * Check Fuel
  */
-Princess.prototype.checkFuel = function() {
+Princess.prototype.checkFuel = function () {
     if (this._data.fuel <= 0) {
-        //this.game.state.start('gameOver', true, false, this);
         this.game.gameOver.call(this);
     }
-
     return this;
-}
+};
 
 /*
  * #move
- */ 
-function time(){
+ */
+function time() {
     return new Date().getTime();
 }
 var lastTime = time(), lastDirection = false;
 Princess.prototype.move = function move(direction) {
     // Set new facing direction
-    var data = this._data, timePressedFactor;
+    var data = this._data;
     data.facing = direction;
     // Modify this position
-    if(lastDirection != direction){
+    if (lastDirection != direction) {
         lastTime = time();
         lastDirection = direction;
-        //this.body.gravity.x = 0;
     }
-    if(!direction){
-        //this.body.gravity.x = 0;
+    if (!direction) {
         return;
     }
-    //timePressedFactor = 1 + ((time() - lastTime) / 300);
     if (c.LEFT === direction) {
-        //this.body.gravity.x = -1;
-        this.body.position.x -= c.STEP * this.game.turbo/1.5;
-    } else if(c.RIGHT === direction) {
-        //this.body.gravity.x = 1;
-        this.body.position.x += c.STEP * this.game.turbo/1.5;
+        this.body.position.x -= c.STEP * 1.5;
+    } else if (c.RIGHT === direction) {
+        this.body.position.x += c.STEP * 1.5;
     }
     // Clear past timers
     if (timer.facing) {
@@ -127,15 +126,15 @@ Princess.prototype.move = function move(direction) {
 };
 
 var blinkCounter = 0, interval;
-function blink(princess){
+function blink(princess) {
     princess.visible = !princess.visible;
-    if(++blinkCounter >= 20){
+    if (++blinkCounter >= 20) {
         clearInterval(interval);
         princess.visible = true;
         princess._canBeHurt = true;
     }
 }
-Princess.prototype._noChoqueMeChocaron = function _noChoqueMeChocaron(){
+Princess.prototype._noChoqueMeChocaron = function _noChoqueMeChocaron() {
     this._canBeHurt = false;
     blinkCounter = 0;
     interval = setInterval(blink, 100, this);
@@ -163,6 +162,22 @@ Princess.prototype.registerCollision = function registerCollision(entity, callba
  */
 
 Princess.prototype.update = function update() {
+    emitter.minParticleSpeed.set(0, 100);
+    emitter.maxParticleSpeed.set(0, 200);
+
+    emitter.emitX = this.position.x - 4;
+    emitter.emitY = this.position.y;
+
+    if (this.game.turbo == 6) {
+        emitter.gravity = 600;
+        emitter.setScale(0.5, 0, 0.5, 0, 2000);
+    } else if (this.game.turbo == 1) {
+        emitter.setScale(0.1, 0, 0.1, 0, 300);
+    } else {
+        emitter.gravity = 300;
+        emitter.setScale(0.2, 0, 0.2, 0, 1000);
+    }
+
     return this.consumeFuel()
         .checkFuel()
         .checkCollision()
@@ -178,18 +193,9 @@ Princess.prototype.reRender = function reRender() {
     var facing = this._data.facing;
     if (c.LEFT === facing) {
         this.frame = 1;
-//        this.loadTexture('princess_left');
-//        this.body.setSize(45, 100, 8, 0);
-//        this.scale.x = -1;
     } else if (c.RIGHT === facing) {
         this.frame = 2;
-//        this.loadTexture('princess_left');
-//        this.body.setSize(45, 100, -8, 0);
-//        this.scale.x = 1;
     } else {
-//        this.loadTexture('princess_center');
-//        this.body.setSize(45, 100, -3, 0);
-//        this.scale.x = 2;
         this.frame = 0;
     }
     // Render collision box
