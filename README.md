@@ -1,6 +1,6 @@
 evader-phaser
 ===
-[ ![Codeship Status for GameDevLeaders/evader-phaser](https://codeship.com/projects/e20267a0-ea31-0132-ffd2-32dfa18a9fce/status?branch=master)](https://codeship.com/projects/83075)
+[ ![Codeship Status for InformalPenguins/rocket-princess](https://codeship.com/projects/e20267a0-ea31-0132-ffd2-32dfa18a9fce/status?branch=master)](https://codeship.com/projects/83075)
 
 **Codeship:**
 
