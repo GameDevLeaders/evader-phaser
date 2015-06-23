@@ -20,6 +20,10 @@ var play = function(game) {};
 play.prototype = {
     preload: function () {
         var game = this.game;
+
+        // Loading...
+        this.game.add.bitmapText(game.world.centerX - 50, game.world.centerY, 'scoreFont', 'Loading...', 12);
+
         //sounds
         this.game.load.audio('explosion', 'assets/audio/dies.wav');
         //sprites
