@@ -324,15 +324,16 @@ function update() {
 function createEnemies() {
     var game = this.game,
         line = this.game._my_world.getLine(),
-        isWolf = getRandom(0, 3) === 0,
-        enemySpriteName = isWolf ? 'wolf' : 'lumberjack',
-        x, //generated X
+        isWolf, enemySpriteName, x, //generated X
         enemy; //the enemy (Sprite) to be added.
 
     for (var i = 0; i < line.length; i++) {
         if (line[i] === 0) {
             continue;
         }
+
+        isWolf = getRandom(0, 3) === 0;
+        enemySpriteName = isWolf ? 'wolf' : 'lumberjack';
 
         x = generateXForEnemy(i, game);
         enemy = game.add.sprite(x, -100, enemySpriteName);
