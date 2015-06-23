@@ -20,6 +20,10 @@ var play = function(game) {};
 play.prototype = {
     preload: function () {
         var game = this.game;
+
+        // Loading...
+        this.game.add.bitmapText(game.world.centerX - 50, game.world.centerY, 'scoreFont', 'Loading...', 12);
+
         //sounds
         this.game.load.audio('explosion', 'assets/audio/dies.wav');
         //sprites
@@ -28,13 +32,13 @@ play.prototype = {
         this.game.load.image('touch', 'assets/nothing.png');
         this.game.load.spritesheet('princess', 'assets/sprites/princess.png', c.PRINCESS_WIDTH,  c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
         this.game.load.spritesheet('lumberjack', 'assets/sprites/lumberjack-s.png', c.LUMBERJACK_WIDTH,  c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);
+        this.game.load.spritesheet('wolf', 'assets/sprites/wolf.png', c.WOLF_WIDTH,  c.WOLF_HEIGHT, c.WOLF_SPRITES);
         this.game.load.image('princess_center', 'assets/sprites/princess-back.png');
         this.game.load.image('princess_left', 'assets/sprites/princess-side.png');
         this.game.load.image('fuel_container', 'assets/sprites/fuelbar.png');
         this.game.load.image('fuel', 'assets/sprites/fuelbar-fill.png');
         this.game.load.image('cheese', 'assets/sprites/cheese.png');
         this.game.load.image('rotten-cheese', 'assets/sprites/rottencheese.png');
-        this.game.load.image('wolf', 'assets/sprites/wolf.png');
         this.game.load.image("background", "assets/sprites/castle-texture.png");
         this.game.load.image("clouds", "assets/sprites/sky.png");
         this.game.load.image("creeperL", "assets/sprites/enredadera-izq.png");
@@ -77,11 +81,11 @@ function createCheeses(){
     game.physics.arcade.enable(cheese);
     game.physics.arcade.enable(rottenCheese);
     cheese.name = 'fuel-up';
-    cheese.fuel = 15;
+    cheese.fuel = c.CHEESE_FUEL;
     cheese.body.velocity.y = 0;
     rottenCheese.body.velocity.y = 0;
     rottenCheese.name = 'fuel-down';
-    rottenCheese.fuel = -7;
+    rottenCheese.fuel = -1 * (c.CHEESE_FUEL/2);
 
     this.activeCheese = null;
 }
@@ -138,7 +142,7 @@ function create() {
         if(princess._canBeHurt){
             enemy.kill();
             enemyGroup.remove(enemy);
-            that._data.fuel += -15;
+            that._data.fuel += c.ENEMY_FUEL;
             princess._noChoqueMeChocaron();
         }
     });
@@ -320,9 +324,7 @@ function update() {
 function createEnemies() {
     var game = this.game,
         line = this.game._my_world.getLine(),
-        isWolf = getRandom(0, 3) === 0,
-        enemySpriteName = isWolf ? 'wolf' : 'lumberjack',
-        x, //generated X
+        isWolf, enemySpriteName, x, //generated X
         enemy; //the enemy (Sprite) to be added.
 
     for (var i = 0; i < line.length; i++) {
@@ -330,16 +332,15 @@ function createEnemies() {
             continue;
         }
 
+        isWolf = getRandom(0, 3) === 0;
+        enemySpriteName = isWolf ? 'wolf' : 'lumberjack';
+
         x = generateXForEnemy(i, game);
-        if(isWolf){
-            enemy = enemyGroup.create(x, -100, enemySpriteName);
-        } else {
-            enemy = game.add.sprite(x, -100, enemySpriteName);
-            //enemyGroup.create(x, -100, enemySpriteName);
-            enemy.animations.add('idle');
-            enemy.animations.play('idle', 30, true);
-            enemyGroup.add(enemy);
-        }
+        enemy = game.add.sprite(x, -100, enemySpriteName);
+        //enemyGroup.create(x, -100, enemySpriteName);
+        enemy.animations.add('idle');
+        enemy.animations.play('idle', 30, true);
+        enemyGroup.add(enemy);
         enemy.scale.set(.7,.7);
         enemy.body.velocity.y = 100;
     }
