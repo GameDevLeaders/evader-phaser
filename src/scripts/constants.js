@@ -18,6 +18,8 @@ module.exports = {
     CONSUME_FUEL_DELAY      :  300,
     SLIDE_DISTANCE          :   20,
     TURBO_DELAY             : 1000,
+    CHEESE_FUEL             :   15,
+    ENEMY_FUEL              :  -30,
 
     /***** player sprite *****/
     PRINCESS_WIDTH: 100,

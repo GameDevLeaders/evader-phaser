@@ -77,11 +77,11 @@ function createCheeses(){
     game.physics.arcade.enable(cheese);
     game.physics.arcade.enable(rottenCheese);
     cheese.name = 'fuel-up';
-    cheese.fuel = 15;
+    cheese.fuel = c.CHEESE_FUEL;
     cheese.body.velocity.y = 0;
     rottenCheese.body.velocity.y = 0;
     rottenCheese.name = 'fuel-down';
-    rottenCheese.fuel = -7;
+    rottenCheese.fuel = -1 * (c.CHEESE_FUEL/2);
 
     this.activeCheese = null;
 }
@@ -138,7 +138,7 @@ function create() {
         if(princess._canBeHurt){
             enemy.kill();
             enemyGroup.remove(enemy);
-            that._data.fuel += -15;
+            that._data.fuel += c.ENEMY_FUEL;
             princess._noChoqueMeChocaron();
         }
     });
