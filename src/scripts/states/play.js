@@ -28,13 +28,13 @@ play.prototype = {
         this.game.load.image('touch', 'assets/nothing.png');
         this.game.load.spritesheet('princess', 'assets/sprites/princess.png', c.PRINCESS_WIDTH,  c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
         this.game.load.spritesheet('lumberjack', 'assets/sprites/lumberjack-s.png', c.LUMBERJACK_WIDTH,  c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);
+        this.game.load.spritesheet('wolf', 'assets/sprites/wolf.png', c.WOLF_WIDTH,  c.WOLF_HEIGHT, c.WOLF_SPRITES);
         this.game.load.image('princess_center', 'assets/sprites/princess-back.png');
         this.game.load.image('princess_left', 'assets/sprites/princess-side.png');
         this.game.load.image('fuel_container', 'assets/sprites/fuelbar.png');
         this.game.load.image('fuel', 'assets/sprites/fuelbar-fill.png');
         this.game.load.image('cheese', 'assets/sprites/cheese.png');
         this.game.load.image('rotten-cheese', 'assets/sprites/rottencheese.png');
-        this.game.load.image('wolf', 'assets/sprites/wolf.png');
         this.game.load.image("background", "assets/sprites/castle-texture.png");
         this.game.load.image("clouds", "assets/sprites/sky.png");
         this.game.load.image("creeperL", "assets/sprites/enredadera-izq.png");
@@ -331,15 +331,11 @@ function createEnemies() {
         }
 
         x = generateXForEnemy(i, game);
-        if(isWolf){
-            enemy = enemyGroup.create(x, -100, enemySpriteName);
-        } else {
-            enemy = game.add.sprite(x, -100, enemySpriteName);
-            //enemyGroup.create(x, -100, enemySpriteName);
-            enemy.animations.add('idle');
-            enemy.animations.play('idle', 30, true);
-            enemyGroup.add(enemy);
-        }
+        enemy = game.add.sprite(x, -100, enemySpriteName);
+        //enemyGroup.create(x, -100, enemySpriteName);
+        enemy.animations.add('idle');
+        enemy.animations.play('idle', 30, true);
+        enemyGroup.add(enemy);
         enemy.scale.set(.7,.7);
         enemy.body.velocity.y = 100;
     }

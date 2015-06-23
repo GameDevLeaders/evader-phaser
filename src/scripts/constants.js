@@ -29,6 +29,11 @@ module.exports = {
     LUMBERJACK_HEIGHT: 124,
     LUMBERJACK_SPRITES: 2,
 
+    /***** wolf sprite *****/
+    WOLF_WIDTH: 124,
+    WOLF_HEIGHT: 144,
+    WOLF_SPRITES: 2,
+
     /***** hand sprite *****/
     MOVE_DELAY : 10,
     DELAY_BETWEEN_ANIMATIONS: 500,
