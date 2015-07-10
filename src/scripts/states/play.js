@@ -1,6 +1,7 @@
 var Princess = require('../entities/princess');
 var World = require('../entities/world');
 var c = require('../constants');
+var SoundsManager = require('../sounds');
 
 var cursors,
     cheeseGroup,
@@ -10,7 +11,7 @@ var cursors,
     fuelBar,
     cheese,
     rottenCheese,
-    sounds,
+    SM,
     cropRect,
     fuelMaxW,
     enemiesPerLine;
@@ -24,8 +25,6 @@ play.prototype = {
         // Loading...
         this.game.add.bitmapText(game.world.centerX - 50, game.world.centerY, 'scoreFont', 'Loading...', 12);
 
-        //sounds
-        this.game.load.audio('explosion', 'assets/audio/dies.wav');
         //sprites
         this.game.load.image('compass', 'assets/nothing.png');
         this.game.load.image('touch_segment', 'assets/nothing.png');
@@ -50,11 +49,10 @@ play.prototype = {
         this.game.load.image('fire3', 'assets/fire3.png');
         this.game.load.image('smoke', 'assets/smoke-puff.png');
 
-        sounds = {
-                dies: game.add.audio('explosion')
-        };
+        SM = new SoundsManager(game);
         function gameOver(state){
-            //sounds.dies.play(); // PLEASE !!
+            SM.stop(SM.sounds.background);
+            SM.play(SM.sounds.dies);
             this.game.state.start('gameOver', true, false, this);
             return;
         }
@@ -140,6 +138,7 @@ function create() {
     princess = new Princess(this.game, this.game.world.centerX, this.game.height - c.PRINCESS_HEIGHT, 0);
     princess.registerCollision(enemyGroup, function (that, enemy) {
         if(princess._canBeHurt){
+            SM.play(SM.sounds.hit);
             enemy.kill();
             enemyGroup.remove(enemy);
             that._data.fuel += c.ENEMY_FUEL;
@@ -147,6 +146,8 @@ function create() {
         }
     });
     princess.registerCollision(cheeseGroup, function (that, cheese) {
+        SM.play(cheese.fuel > 0 ? SM.sounds.cheese: SM.sounds.rotten_cheese);
+
         that.addFuel(cheese.fuel);
         that.score += Math.floor(cheese.fuel / 2);
 
@@ -181,7 +182,11 @@ function create() {
     this.game.touchControl.imageGroup.forEach(function (e) {
         e.scale.setTo(0.75, 0.75);
     });
+
+    SM.play(SM.sounds.start);
+    SM.play(SM.sounds.background, true);
 }
+
 function updateScoreX(){
     //TODO: Refactor this to force right side align
     this.scoreText.x = this.game.width - 30 - this.scoreText.width;

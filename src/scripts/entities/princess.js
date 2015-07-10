@@ -95,23 +95,22 @@ Princess.prototype.checkFuel = function () {
 function time() {
     return new Date().getTime();
 }
-var lastTime = time(), lastDirection = false;
 Princess.prototype.move = function move(direction) {
     // Set new facing direction
-    var data = this._data;
+    var data = this._data,
+        newSpeed = this.width * 6 + (this.game.turbo * this.game.turbo * 0.8);
     data.facing = direction;
-    // Modify this position
-    if (lastDirection != direction) {
-        lastTime = time();
-        lastDirection = direction;
-    }
-    if (!direction) {
-        return;
-    }
+    //if (!direction) {
+    //    return;
+    //}
+
     if (c.LEFT === direction) {
-        this.body.position.x -= c.STEP * 1.5;
+        this.body.velocity.x = -newSpeed;
     } else if (c.RIGHT === direction) {
-        this.body.position.x += c.STEP * 1.5;
+        this.body.velocity.x = newSpeed;
+        //this.body.position.x += c.STEP * 1.5;
+    } else {
+        this.body.velocity.x = 0;
     }
     // Clear past timers
     if (timer.facing) {
