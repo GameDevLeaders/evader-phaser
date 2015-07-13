@@ -97,20 +97,15 @@ function time() {
 }
 Princess.prototype.move = function move(direction) {
     // Set new facing direction
-    var data = this._data,
-        newSpeed = this.width * 6 + (this.game.turbo * this.game.turbo * 0.8);
+    var data = this._data;
     data.facing = direction;
-    //if (!direction) {
-    //    return;
-    //}
-
+    if (!direction) {
+        return;
+    }
     if (c.LEFT === direction) {
-        this.body.velocity.x = -newSpeed;
+        this.body.position.x -= c.STEP * 1.5;
     } else if (c.RIGHT === direction) {
-        this.body.velocity.x = newSpeed;
-        //this.body.position.x += c.STEP * 1.5;
-    } else {
-        this.body.velocity.x = 0;
+        this.body.position.x += c.STEP * 1.5;
     }
     // Clear past timers
     if (timer.facing) {
