@@ -48,6 +48,7 @@ play.prototype = {
         this.game.load.image('fire2', 'assets/fire2.png');
         this.game.load.image('fire3', 'assets/fire3.png');
         this.game.load.image('smoke', 'assets/smoke-puff.png');
+        this.game.load.image('pauseButton', 'assets/pause.png');
 
         SM = new SoundsManager(game);
         function gameOver(state){
@@ -182,6 +183,18 @@ function create() {
     this.game.touchControl.imageGroup.forEach(function (e) {
         e.scale.setTo(0.75, 0.75);
     });
+
+    var pauseButton = fuelBar = this.game.add.sprite(this.game.width/2 - 30, 5 + 5, 'pauseButton');
+    pauseButton.scale.set(.3, .3);
+    pauseButton.inputEnabled = true;
+    pauseButton.input.useHandCursor = true; //if you want a hand cursor
+    pauseButton.events.onInputDown.add(pause, this);
+
+    var spaceBarKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+    spaceBarKey.onDown.add(shiftPause, this);
+
+    // Add a input listener that can help us return from being paused
+    this.game.input.onDown.add(unpause, this);
 
     SM.play(SM.sounds.start);
     SM.play(SM.sounds.background, true);
@@ -357,6 +370,27 @@ function generateXForEnemy(index, game) {
 
 function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function pause() {
+    if(!this.game.paused) {
+        this.game.paused = true;
+    }
+}
+
+function unpause() {
+    if(this.game.paused) {
+        this.game.paused = false;
+    }
+}
+
+function shiftPause() {
+    if(!this.game.paused) {
+        pause.apply(this);
+    }
+    else {
+        unpause.apply(this);
+    }
 }
 
 module.exports = play;
