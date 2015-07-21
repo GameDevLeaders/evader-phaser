@@ -29,7 +29,7 @@ function bootGameState() {
 
         this.game.add.bitmapText(5, this.game.height - 10, 'scoreFont', cfg.version, 8);
 
-        var logo = this.game.add.sprite(this.game.world.centerX - 150, -20, 'logo');
+        var logo = this.game.add.sprite(this.game.world.centerX - 50, -20, 'logo');
         logo.scale.set(.5,.5);
 
         var spaceBarKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -79,7 +79,7 @@ function bootGameState() {
     }
 
     function startGame() {
-        this.game.state.start('play');
+        this.game.state.start('intro');
     }
 }
 
