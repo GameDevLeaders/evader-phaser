@@ -79,7 +79,7 @@ function bootGameState() {
     }
 
     function startGame() {
-        this.game.state.start('play');
+        this.game.state.start('intro');
     }
 }
 
