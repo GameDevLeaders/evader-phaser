@@ -7,12 +7,12 @@ Menu.prototype = Object.create(Phaser.State.prototype);
 Menu.prototype.constructor = Menu;
 
 Menu.prototype.create = function () {
-  var labelStyle = {align: 'center', fill: '#000', font: '15px Arial'};
-  var titleStyle = {align: 'center', fill: '#f00', font: 'bold 45px Arial'};
+  var labelStyle = {align: 'center', fill: '#fff', font: '15px Arial'};
+  var titleStyle = {align: 'center', fill: '#fff', font: 'bold 45px Arial'};
   var text, title;
 
   if (this.game.device.desktop) {
-    text = 'penis to start';
+    text = 'Click to start';
   } else {
     text = 'Touch to start';
   }

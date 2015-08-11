@@ -62,7 +62,9 @@ function introState () {
 	}
 
 	function update () {
-		// if boton aplastado start game
+		if (this.game.input.activePointer.isDown) {
+        this.game.state.start('play');
+    }
 	}
 
 	function startGame() {
