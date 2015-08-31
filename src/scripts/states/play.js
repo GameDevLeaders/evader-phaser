@@ -138,7 +138,8 @@ function create() {
     enemyGroup.enableBody = true;
 
     princess = new Princess(this.game, this.game.world.centerX, this.game.height - c.PRINCESS_HEIGHT, 0);
-    princess.registerCollision(enemyGroup, function (that, enemy) {
+
+    princess.registerCollision(enemyGroup, function princessCollisionsWithEnemy(that, enemy) {
         if(princess._canBeHurt){
             SM.play(SM.sounds.hit);
             enemy.kill();
@@ -147,7 +148,8 @@ function create() {
             princess._noChoqueMeChocaron();
         }
     });
-    princess.registerCollision(cheeseGroup, function (that, cheese) {
+
+    princess.registerCollision(cheeseGroup, function princessCollisionsWithCheese(that, cheese) {
         if (cheese.fuel > 0) {
             SM.play(SM.sounds.cheese);
         } else {
@@ -168,7 +170,9 @@ function create() {
     fuelBar.crop(cropRect);
     this.createEnemies();
     this.scoreText = this.game.add.bitmapText(this.game.width - 10, 10, 'scoreFont', this.game._my_world.score, 30);
+
     addScore.call(this, 0);
+
     if (this.game._debug) {
         this.game.stage.disableVisibilityChange = true;
         this.game.debug.start();
@@ -189,7 +193,7 @@ function create() {
         e.scale.setTo(0.75, 0.75);
     });
 
-    var pauseButton = fuelBar = this.game.add.sprite(this.game.width/2 - 30, 5 + 5, 'pauseButton');
+    var pauseButton = this.game.add.sprite(this.game.width/2 - 30, 5 + 5, 'pauseButton');
     pauseButton.scale.set(.3, .3);
     pauseButton.inputEnabled = true;
     pauseButton.input.useHandCursor = true; //if you want a hand cursor
@@ -212,7 +216,6 @@ function updateScoreX(){
 }
 
 function addScore(points){
-    console.log('score');
     this.game._my_world.score += points;
     this.scoreText.text = this.game._my_world.score;
     updateScoreX.call(this);
