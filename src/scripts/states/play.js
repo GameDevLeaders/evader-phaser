@@ -51,6 +51,7 @@ play.prototype = {
         this.game.load.image('pauseButton', 'assets/pause.png');
 
         SM = new SoundsManager(game);
+
         function gameOver(state){
             SM.stop(SM.sounds.background);
             SM.play(SM.sounds.dies);
@@ -147,7 +148,11 @@ function create() {
         }
     });
     princess.registerCollision(cheeseGroup, function (that, cheese) {
-        SM.play(cheese.fuel > 0 ? SM.sounds.cheese: SM.sounds.rotten_cheese);
+        if (cheese.fuel > 0) {
+            SM.play(SM.sounds.cheese);
+        } else {
+            SM.play(SM.sounds.rotten_cheese);
+        }
 
         that.addFuel(cheese.fuel);
         that.score += Math.floor(cheese.fuel / 2);
@@ -196,6 +201,7 @@ function create() {
     // Add a input listener that can help us return from being paused
     this.game.input.onDown.add(unpause, this);
 
+    SM.create();
     SM.play(SM.sounds.start);
     SM.play(SM.sounds.background, true);
 }
