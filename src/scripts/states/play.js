@@ -52,7 +52,7 @@ play.prototype = {
 
         SM = new SoundsManager(game);
 
-        function gameOver(state){
+        function gameOver(){
             SM.stop(SM.sounds.background);
             SM.play(SM.sounds.dies);
             this.game.state.start('gameOver', true, false, this);
@@ -210,11 +210,14 @@ function updateScoreX(){
     //TODO: Refactor this to force right side align
     this.scoreText.x = this.game.width - 30 - this.scoreText.width;
 }
+
 function addScore(points){
+    console.log('score');
     this.game._my_world.score += points;
     this.scoreText.text = this.game._my_world.score;
     updateScoreX.call(this);
 }
+
 function updateEnemies() {
     var game = this.game, enemies = enemyGroup.children;
     for (var i = 0; i < enemies.length; i++) {
@@ -222,8 +225,13 @@ function updateEnemies() {
         var velocity = this.game._my_world.velocity * this.game.turbo;
         enemies[i].body.velocity.y = velocity < c.MAX_VELOCITY ? velocity : c.MAX_VELOCITY;
 
-        if (enemies[i].body.y > game.height) {
+        if (enemies[i].position.y > princess.position.y && !enemies[i].disabled) {
             addScore.call(this, 1);
+            enemies[i].disabled = true;
+        }
+
+        if (enemies[i].body.y > game.height) {
+            enemies[i].disabled = false;
             enemyGroup.remove(enemies[i], true, true);
         }
     }
