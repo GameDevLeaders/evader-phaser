@@ -2,10 +2,12 @@
 
 var cfg = require('../../../config');
 var Hand = require('../entities/hand');
+var SoundsManager = require('../sounds');
 var bootGame = function(game) {};
 var timer = {};
 var interval = {};
 var background;
+var SM;
 
 bootGame.prototype = bootGameState();
 
@@ -21,6 +23,11 @@ function bootGameState() {
     }
 
     function create() {
+
+      SM = new SoundsManager(this.game);
+      SM.create();
+      SM.play(SM.SOUNDS.MENU, true);
+
         background = this.game.add.tileSprite(0, 0, this.game.stage.width, this.game.cache.getImage('sky').height, 'sky');
 
         this.game.add.bitmapText(5, this.game.height - 10, 'scoreFont', cfg.version, 8);
@@ -75,6 +82,7 @@ function bootGameState() {
     }
 
     function startGame() {
+      SM.stop(SM.SOUNDS.MENU);
         this.game.state.start('intro');
     }
 }

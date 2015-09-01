@@ -22,12 +22,14 @@ Preloader.prototype.preload = function () {
      * Music & sounds
      */
 
-    load.audio(c.SOUNDS.BACKGROUND, 'audio/background_music.mp3');
+    load.audio(c.SOUNDS.BACKGROUND, 'audio/juego.mp3');
     load.audio(c.SOUNDS.START, 'audio/start.mp3');
     load.audio(c.SOUNDS.HIT, 'audio/hit.wav');
     load.audio(c.SOUNDS.CHEESE, 'audio/cheese.wav');
     load.audio(c.SOUNDS.DIES, 'audio/dies.wav');
     load.audio(c.SOUNDS.ROTTEN_CHEESE, 'audio/rotten_cheese.mp3');
+    load.audio(c.SOUNDS.MENU, 'audio/menu_otheroption.mp3');
+    load.audio(c.SOUNDS.INTRO, 'audio/intro.mp3');
 
     /**
      * Assets for bootGame.js
