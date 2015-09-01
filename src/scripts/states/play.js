@@ -16,50 +16,11 @@ var cursors,
     fuelMaxW,
     enemiesPerLine;
 
-var play = function(game) {};
+var play = function (game) {
+};
 
 play.prototype = {
-    preload: function () {
-        var game = this.game;
-
-        // Loading...
-        this.game.add.bitmapText(game.world.centerX - 50, game.world.centerY, 'scoreFont', 'Loading...', 12);
-
-        //sprites
-        this.game.load.image('compass', 'assets/nothing.png');
-        this.game.load.image('touch_segment', 'assets/nothing.png');
-        this.game.load.image('touch', 'assets/nothing.png');
-        this.game.load.spritesheet('princess', 'assets/sprites/princess.png', c.PRINCESS_WIDTH,  c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
-        this.game.load.spritesheet('lumberjack', 'assets/sprites/lumberjack-s.png', c.LUMBERJACK_WIDTH,  c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);
-        this.game.load.spritesheet('wolf', 'assets/sprites/wolf.png', c.WOLF_WIDTH,  c.WOLF_HEIGHT, c.WOLF_SPRITES);
-        this.game.load.image('princess_center', 'assets/sprites/princess-back.png');
-        this.game.load.image('princess_left', 'assets/sprites/princess-side.png');
-        this.game.load.image('fuel_container', 'assets/sprites/fuelbar.png');
-        this.game.load.image('fuel', 'assets/sprites/fuelbar-fill.png');
-        this.game.load.image('cheese', 'assets/sprites/cheese.png');
-        this.game.load.image('rotten-cheese', 'assets/sprites/rottencheese.png');
-        this.game.load.image("background", "assets/sprites/castle-texture.png");
-        this.game.load.image("clouds", "assets/sprites/sky.png");
-        this.game.load.image("creeperL", "assets/sprites/enredadera-izq.png");
-        this.game.load.image("creeperR", "assets/sprites/enredadera-der.png");
-        this.game.load.bitmapFont('scoreFont', 'assets/fonts/bitmapFonts/carrier_command.png', 'assets/fonts/bitmapFonts/carrier_command.xml');
-
-        this.game.load.image('fire1', 'assets/fire1.png');
-        this.game.load.image('fire2', 'assets/fire2.png');
-        this.game.load.image('fire3', 'assets/fire3.png');
-        this.game.load.image('smoke', 'assets/smoke-puff.png');
-        this.game.load.image('pauseButton', 'assets/pause.png');
-
-        SM = new SoundsManager(game);
-
-        function gameOver(){
-            SM.stop(SM.sounds.background);
-            SM.play(SM.sounds.dies);
-            this.game.state.start('gameOver', true, false, this);
-            return;
-        }
-        this.game.gameOver = gameOver;
-    },
+    preload: preload,
     create: create,
     update: update,
     createEnemies: createEnemies,
@@ -68,14 +29,18 @@ play.prototype = {
     activeCheese: null
 };
 
-function createCheeses(){
+function preload() {
+    // This should be empty. To load something please use preloader.js
+}
+
+function createCheeses() {
     var game = this.game, newX = 0;
     cheese = cheeseGroup.create(0, -100, 'cheese');
-    cheese.scale.set(.5,.5);
+    cheese.scale.set(.5, .5);
 
     rottenCheese = cheeseGroup.create(0, -100, 'rotten-cheese');
-    rottenCheese.scale.set(.5,.5);
-    newX = Math.floor( Math.random() * (this.game.width - cheese.width) );
+    rottenCheese.scale.set(.5, .5);
+    newX = Math.floor(Math.random() * (this.game.width - cheese.width));
     cheese.x = newX;
     rottenCheese.x = newX;
     game.physics.arcade.enable(cheese);
@@ -85,10 +50,11 @@ function createCheeses(){
     cheese.body.velocity.y = 0;
     rottenCheese.body.velocity.y = 0;
     rottenCheese.name = 'fuel-down';
-    rottenCheese.fuel = -1 * (c.CHEESE_FUEL/2);
+    rottenCheese.fuel = -1 * (c.CHEESE_FUEL / 2);
 
     this.activeCheese = null;
 }
+
 function create() {
     var that = this, tileSize = 0, tilesCount = 0;
 
@@ -109,24 +75,24 @@ function create() {
     //Adding the clouds
     tilesCount = 2;
     var tile;
-    for(var i = 0;i < tilesCount; i++){
+    for (var i = 0; i < tilesCount; i++) {
         //                                      x                                   ,y         , width   , height  , sprite-name
-        tile = this.game.add.tileSprite(0, i*this.game.height, this.game.width, this.game.height, 'clouds');
+        tile = this.game.add.tileSprite(0, i * this.game.height, this.game.width, this.game.height, 'clouds');
         tile._tileSpeed = 0.2;
         this._bg.push(tile);
     }
-    tileSize = 320, tilesCount = parseInt(this.game.world.height/tileSize) + 1;
-    for(var i = 0;i < tilesCount; i++){
+    tileSize = 320, tilesCount = parseInt(this.game.world.height / tileSize) + 1;
+    for (var i = 0; i < tilesCount; i++) {
         //                                      x                                   ,y         , width   , height  , sprite-name
-        this._bg.push(this.game.add.tileSprite(this.game.world.centerX - tileSize/2 , i*tileSize, tileSize, tileSize, 'background'));
+        this._bg.push(this.game.add.tileSprite(this.game.world.centerX - tileSize / 2, i * tileSize, tileSize, tileSize, 'background'));
     }
     //Adding the creepers
-    tileSize = 80, tilesCount = parseInt(this.game.world.height/tileSize) + 1;
-    for(var i = 0;i < tilesCount; i++){
-        this._bg.push(this.game.add.tileSprite(this.game.world.centerX - 320/2 - 2, i*tileSize, tileSize, tileSize, 'creeperL'));
+    tileSize = 80, tilesCount = parseInt(this.game.world.height / tileSize) + 1;
+    for (var i = 0; i < tilesCount; i++) {
+        this._bg.push(this.game.add.tileSprite(this.game.world.centerX - 320 / 2 - 2, i * tileSize, tileSize, tileSize, 'creeperL'));
     }
-    for(var i = 0;i < tilesCount; i++){
-        this._bg.push(this.game.add.tileSprite(this.game.world.centerX + 320/2 + 2 - tileSize, i*tileSize, tileSize, tileSize, 'creeperR'));
+    for (var i = 0; i < tilesCount; i++) {
+        this._bg.push(this.game.add.tileSprite(this.game.world.centerX + 320 / 2 + 2 - tileSize, i * tileSize, tileSize, tileSize, 'creeperR'));
     }
 
 
@@ -140,8 +106,8 @@ function create() {
     princess = new Princess(this.game, this.game.world.centerX, this.game.height - c.PRINCESS_HEIGHT, 0);
 
     princess.registerCollision(enemyGroup, function princessCollisionsWithEnemy(that, enemy) {
-        if(princess._canBeHurt){
-            SM.play(SM.sounds.hit);
+        if (princess._canBeHurt) {
+            SM.play(SM.SOUNDS.HIT);
             enemy.kill();
             enemyGroup.remove(enemy);
             that._data.fuel += c.ENEMY_FUEL;
@@ -151,9 +117,9 @@ function create() {
 
     princess.registerCollision(cheeseGroup, function princessCollisionsWithCheese(that, cheese) {
         if (cheese.fuel > 0) {
-            SM.play(SM.sounds.cheese);
+            SM.play(SM.SOUNDS.CHEESE);
         } else {
-            SM.play(SM.sounds.rotten_cheese);
+            SM.play(SM.SOUNDS.ROTTEN_CHEESE);
         }
 
         that.addFuel(cheese.fuel);
@@ -162,9 +128,9 @@ function create() {
         resetCheese.call(that, cheese);
     });
 
-    fuelContainer = this.game.add.sprite(5 , 5,'fuel_container');
+    fuelContainer = this.game.add.sprite(5, 5, 'fuel_container');
     //30, 5 is the diff for the container into the first px to render the bar.
-    fuelBar = this.game.add.sprite(30 + 5, 5 + 5,'fuel');
+    fuelBar = this.game.add.sprite(30 + 5, 5 + 5, 'fuel');
     cropRect = new Phaser.Rectangle(0, 0, fuelBar.width, fuelBar.height);
     fuelMaxW = fuelBar.width;
     fuelBar.crop(cropRect);
@@ -193,7 +159,7 @@ function create() {
         e.scale.setTo(0.75, 0.75);
     });
 
-    var pauseButton = this.game.add.sprite(this.game.width/2 - 30, 5 + 5, 'pauseButton');
+    var pauseButton = this.game.add.sprite(this.game.width / 2 - 30, 5 + 5, 'pauseButton');
     pauseButton.scale.set(.3, .3);
     pauseButton.inputEnabled = true;
     pauseButton.input.useHandCursor = true; //if you want a hand cursor
@@ -205,17 +171,27 @@ function create() {
     // Add a input listener that can help us return from being paused
     this.game.input.onDown.add(unpause, this);
 
+    SM = new SoundsManager(this.game);
+    function gameOver() {
+        SM.stop(SM.SOUNDS.BACKGROUND);
+        SM.play(SM.SOUNDS.DIES);
+        this.game.state.start('gameOver', true, false, this);
+        return;
+    }
+
+    this.game.gameOver = gameOver;
+
     SM.create();
-    SM.play(SM.sounds.start);
-    SM.play(SM.sounds.background, true);
+    SM.play(SM.SOUNDS.START);
+    SM.play(SM.SOUNDS.BACKGROUND, true);
 }
 
-function updateScoreX(){
+function updateScoreX() {
     //TODO: Refactor this to force right side align
     this.scoreText.x = this.game.width - 30 - this.scoreText.width;
 }
 
-function addScore(points){
+function addScore(points) {
     this.game._my_world.score += points;
     this.scoreText.text = this.game._my_world.score;
     updateScoreX.call(this);
@@ -239,7 +215,7 @@ function updateEnemies() {
         }
     }
 
-    if(!enemyGroup.length) {
+    if (!enemyGroup.length) {
         this.createEnemies();
     }
     else {
@@ -283,19 +259,19 @@ function checkInputs() {
     }
 }
 
-function resetCheese(currentCheese){
-    currentCheese.y = -100 - 10 * Math.floor( Math.random() * 10 );
-    currentCheese.x = Math.floor( Math.random() * this.game.width );
+function resetCheese(currentCheese) {
+    currentCheese.y = -100 - 10 * Math.floor(Math.random() * 10);
+    currentCheese.x = Math.floor(Math.random() * this.game.width);
     currentCheese.body.velocity.y = 0;
     this.activeCheese = null;
 }
-function updateCheeses(){
+function updateCheeses() {
     var currentCheese = this.activeCheese, game = this.game, nextCheese = 0, newX;
 
-    if(currentCheese){
-        if(currentCheese.body) {
+    if (currentCheese) {
+        if (currentCheese.body) {
             currentCheese.body.velocity.y = 100 * this.game.turbo;
-        }else{
+        } else {
             //Somehow it is getting null bodies, maybe end of the game or after collide detection ):
             return;
         }
@@ -303,15 +279,15 @@ function updateCheeses(){
             //Cheese lost.
             resetCheese.call(this, currentCheese);
         }
-    }else{
-        nextCheese = Math.floor( Math.random() * this.game._my_world.score );
-        if(nextCheese < 10 || nextCheese < this.game._my_world.score*.30){
+    } else {
+        nextCheese = Math.floor(Math.random() * this.game._my_world.score);
+        if (nextCheese < 10 || nextCheese < this.game._my_world.score * .30) {
             this.activeCheese = cheese;
-        }else{
+        } else {
             this.activeCheese = rottenCheese;
         }
-        newX = Math.floor( Math.random() * this.game.width ) + 1;
-        if(newX + this.activeCheese.width > this.game.width){
+        newX = Math.floor(Math.random() * this.game.width) + 1;
+        if (newX + this.activeCheese.width > this.game.width) {
             newX = this.game.width - this.activeCheese.width;
         }
         this.activeCheese.body.x = newX;
@@ -319,7 +295,7 @@ function updateCheeses(){
         this.activeCheese.visible = true;
     }
 }
-function updateEntities(){
+function updateEntities() {
     updateEnemies.call(this);
     updateScoreX.call(this);
     updateCheeses.call(this);
@@ -328,15 +304,15 @@ function updateEntities(){
 function update() {
     var velocity = parseInt(this.game._my_world.velocity / 50), tile;
 
-    if(this.game.turbo == 4) {
+    if (this.game.turbo == 4) {
         velocity += velocity;
     }
-    for(var i = 0, len = this._bg.length; i< len; i++){
+    for (var i = 0, len = this._bg.length; i < len; i++) {
         //_tileSpeed
         tile = this._bg[i];
-        if(tile._tileSpeed){
+        if (tile._tileSpeed) {
             tile.tilePosition.y += tile._tileSpeed
-        }else{
+        } else {
             tile.tilePosition.y += velocity
         }
     }
@@ -346,7 +322,7 @@ function update() {
 
     this.checkInputs();
     princess.update();
-    cropRect.width =  (princess._data.fuel / c.MAX_FUEL) * fuelMaxW;
+    cropRect.width = (princess._data.fuel / c.MAX_FUEL) * fuelMaxW;
     fuelBar.updateCrop();
 
     if (this.game._debug) {
@@ -376,7 +352,7 @@ function createEnemies() {
         enemy.animations.add('idle');
         enemy.animations.play('idle', 30, true);
         enemyGroup.add(enemy);
-        enemy.scale.set(.7,.7);
+        enemy.scale.set(.7, .7);
         enemy.body.velocity.y = 100;
     }
 }
@@ -390,19 +366,19 @@ function getRandom(min, max) {
 }
 
 function pause() {
-    if(!this.game.paused) {
+    if (!this.game.paused) {
         this.game.paused = true;
     }
 }
 
 function unpause() {
-    if(this.game.paused) {
+    if (this.game.paused) {
         this.game.paused = false;
     }
 }
 
 function shiftPause() {
-    if(!this.game.paused) {
+    if (!this.game.paused) {
         pause.apply(this);
     }
     else {

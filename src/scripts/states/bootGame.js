@@ -17,11 +17,7 @@ function bootGameState() {
     };
 
     function preload() {
-        this.game.load.bitmapFont('scoreFont', 'assets/fonts/bitmapFonts/carrier_command.png', 'assets/fonts/bitmapFonts/carrier_command.xml');
-        this.game.load.image('logo', 'assets/logo.png');
-        this.game.load.image('hand', 'assets/hand3.png');
-        this.game.load.image('instructions', 'assets/instr.png');
-        this.game.load.image('sky', 'assets/sprites/sky.png');
+        // This should be empty. To load something please use preloader.js
     }
 
     function create() {

@@ -14,7 +14,7 @@ function gameOverState() {
     };
 
     function preload() {
-        this.game.load.bitmapFont('scoreFont', 'assets/fonts/bitmapFonts/carrier_command.png', 'assets/fonts/bitmapFonts/carrier_command.xml');
+        // This should be empty. To load something please use preloader.js
     }
 
     function init(state){

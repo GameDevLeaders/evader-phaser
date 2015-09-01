@@ -68,6 +68,15 @@ module.exports = {
 
     FLYINGPRINCESS_WIDTH: 200,
     FLYINGPRINCESS_HEIGHT: 150,
-    FLYTINGPRINCESS_SPRITES: 6
+    FLYTINGPRINCESS_SPRITES: 6,
 
+    /*** sounds ***/
+    SOUNDS: {
+        BACKGROUND: "background",
+        DIES: "dies",
+        CHEESE: "cheese",
+        ROTTEN_CHEESE: "rotten_cheese",
+        HIT: "hit",
+        START: "start"
+    }
 };
