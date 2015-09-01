@@ -81,6 +81,10 @@ Preloader.prototype.preload = function () {
     load.image('fire1', 'fire1.png');
     load.image('fire2', 'fire2.png');
     load.image('fire3', 'fire3.png');
+    load.image('window1', 'sprites/window-1.png');
+    load.image('window2', 'sprites/window-2.png');
+    load.image('window3', 'sprites/window-3.png');
+    load.image('window4', 'sprites/window-4.png');
     load.image('smoke', 'smoke-puff.png');
     load.image('pauseButton', 'pause.png');
     load.spritesheet('princess', 'sprites/princess.png', c.PRINCESS_WIDTH, c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
