@@ -70,8 +70,6 @@ Preloader.prototype.preload = function () {
     load.image('princess_left', 'sprites/princess-side.png');
     load.image('fuel_container', 'sprites/fuelbar.png');
     load.image('fuel', 'sprites/fuelbar-fill.png');
-    load.image('cheese', 'sprites/cheese.png');
-    load.image('rotten-cheese', 'sprites/rottencheese.png');
     load.image('background', 'sprites/castle-texture.png');
     load.image('clouds', 'sprites/sky.png');
     load.image('creeperL', 'sprites/enredadera-izq.png');
@@ -80,7 +78,13 @@ Preloader.prototype.preload = function () {
     load.image('fire2', 'fire2.png');
     load.image('fire3', 'fire3.png');
     load.image('smoke', 'smoke-puff.png');
-    load.image('pauseButton', 'pause.png');
+    load.image(c.BUTTONS.PAUSE, 'pause.png');
+    load.image(c.BUTTONS.SETTINGS, 'settings.png');
+    for(var i = 0, windowsSprites = c.SPRITES.WINDOWS, len = windowsSprites.length; i<len;i++){
+        load.image(windowsSprites[i], 'sprites/window-' + ( i+1 )+ '.png'); //window-<1|4>.png
+    }
+    load.image('cheese', 'sprites/cheese.png');
+    load.image('rotten-cheese', 'sprites/rottencheese.png');
     load.spritesheet('princess', 'sprites/princess.png', c.PRINCESS_WIDTH, c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
     load.spritesheet('lumberjack', 'sprites/lumberjack-s.png', c.LUMBERJACK_WIDTH, c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);
     load.spritesheet('wolf', 'sprites/wolf.png', c.WOLF_WIDTH, c.WOLF_HEIGHT, c.WOLF_SPRITES);

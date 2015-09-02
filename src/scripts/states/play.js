@@ -1,3 +1,5 @@
+/*globals require, Phaser*/
+
 var Princess = require('../entities/princess');
 var World = require('../entities/world');
 var c = require('../constants');
@@ -14,7 +16,8 @@ var cursors,
     SM,
     cropRect,
     fuelMaxW,
-    enemiesPerLine;
+    enemiesPerLine,
+    windowSprite;
 
 var play = function (game) {
 };
@@ -36,10 +39,10 @@ function preload() {
 function createCheeses() {
     var game = this.game, newX = 0;
     cheese = cheeseGroup.create(0, -100, 'cheese');
-    cheese.scale.set(.5, .5);
+    cheese.scale.set(0.5, 0.5);
 
     rottenCheese = cheeseGroup.create(0, -100, 'rotten-cheese');
-    rottenCheese.scale.set(.5, .5);
+    rottenCheese.scale.set(0.5, 0.5);
     newX = Math.floor(Math.random() * (this.game.width - cheese.width));
     cheese.x = newX;
     rottenCheese.x = newX;
@@ -51,8 +54,35 @@ function createCheeses() {
     rottenCheese.body.velocity.y = 0;
     rottenCheese.name = 'fuel-down';
     rottenCheese.fuel = -1 * (c.CHEESE_FUEL / 2);
-
     this.activeCheese = null;
+}
+function getRandomWindowKey(){
+    var randomWindow = Math.round(Math.random()*4),
+        windowsSprites = c.SPRITES.WINDOWS;
+
+    return windowsSprites[randomWindow] ||  windowsSprites[0];
+}
+function repaintWindow(lWindow){
+    var key;
+    do {
+        //Make sure we don't repeat same window?
+        key = getRandomWindowKey();
+    }while(key === lWindow.key);
+    lWindow.loadTexture(key);
+    //Put it 0 to 4 times the height above the screen.
+    lWindow.y = - ( Math.round(Math.random()*5) * lWindow.height ) ;
+}
+function createWindow(){
+    var game = this.game,
+        key = getRandomWindowKey(),
+        x;
+    windowSprite = game.add.sprite(0,0, key);
+    x = this.game.width/2 - windowSprite.width/2;
+    windowSprite.x = x;
+    windowSprite.y = 0;
+    game.physics.arcade.enable(windowSprite);
+    windowSprite.body.velocity.y = 0;
+    return windowSprite;
 }
 
 function create() {
@@ -74,27 +104,30 @@ function create() {
 //    this._creepers = [];
     //Adding the clouds
     tilesCount = 2;
-    var tile;
-    for (var i = 0; i < tilesCount; i++) {
+    var tile, i;
+    for (i = 0; i < tilesCount; i++) {
         //                                      x                                   ,y         , width   , height  , sprite-name
         tile = this.game.add.tileSprite(0, i * this.game.height, this.game.width, this.game.height, 'clouds');
-        tile._tileSpeed = 0.2;
+        tile._tileSpeed = c.SPEED.TILE;
         this._bg.push(tile);
     }
-    tileSize = 320, tilesCount = parseInt(this.game.world.height / tileSize) + 1;
-    for (var i = 0; i < tilesCount; i++) {
+    tileSize = 320;
+    tilesCount = parseInt(this.game.world.height / tileSize) + 1;
+    for (i = 0; i < tilesCount; i++) {
         //                                      x                                   ,y         , width   , height  , sprite-name
         this._bg.push(this.game.add.tileSprite(this.game.world.centerX - tileSize / 2, i * tileSize, tileSize, tileSize, 'background'));
     }
     //Adding the creepers
-    tileSize = 80, tilesCount = parseInt(this.game.world.height / tileSize) + 1;
-    for (var i = 0; i < tilesCount; i++) {
+    tileSize = 80;
+    tilesCount = parseInt(this.game.world.height / tileSize) + 1;
+    for (i = 0; i < tilesCount; i++) {
         this._bg.push(this.game.add.tileSprite(this.game.world.centerX - 320 / 2 - 2, i * tileSize, tileSize, tileSize, 'creeperL'));
     }
-    for (var i = 0; i < tilesCount; i++) {
+    for (i = 0; i < tilesCount; i++) {
         this._bg.push(this.game.add.tileSprite(this.game.world.centerX + 320 / 2 + 2 - tileSize, i * tileSize, tileSize, tileSize, 'creeperR'));
     }
 
+    createWindow.call(this); // Add after bgs but before other entities
 
     cheeseGroup = this.game.add.group();
     cheeseGroup.enableBody = true;
@@ -159,8 +192,8 @@ function create() {
         e.scale.setTo(0.75, 0.75);
     });
 
-    var pauseButton = this.game.add.sprite(this.game.width / 2 - 30, 5 + 5, 'pauseButton');
-    pauseButton.scale.set(.3, .3);
+    var pauseButton = this.game.add.sprite(this.game.width / 2 - 30, 5 + 5, c.BUTTONS.PAUSE);
+    pauseButton.scale.set(0.3, 0.3);
     pauseButton.inputEnabled = true;
     pauseButton.input.useHandCursor = true; //if you want a hand cursor
     pauseButton.events.onInputDown.add(pause, this);
@@ -260,8 +293,9 @@ function checkInputs() {
 }
 
 function resetCheese(currentCheese) {
+    var newX =  Math.floor(Math.random() * this.game.width);
     currentCheese.y = -100 - 10 * Math.floor(Math.random() * 10);
-    currentCheese.x = Math.floor(Math.random() * this.game.width);
+    currentCheese.x = newX;
     currentCheese.body.velocity.y = 0;
     this.activeCheese = null;
 }
@@ -299,7 +333,14 @@ function updateEntities() {
     updateEnemies.call(this);
     updateScoreX.call(this);
     updateCheeses.call(this);
+    updateWindow.call(this);
 }
+    function updateWindow(){
+        if (windowSprite.body.y > this.game.height) {
+            //Cheese lost.
+            repaintWindow.call(this, windowSprite);
+        }
+    }
 
 function update() {
     var velocity = parseInt(this.game._my_world.velocity / 50), tile;
@@ -311,11 +352,12 @@ function update() {
         //_tileSpeed
         tile = this._bg[i];
         if (tile._tileSpeed) {
-            tile.tilePosition.y += tile._tileSpeed
+            tile.tilePosition.y += tile._tileSpeed;
         } else {
-            tile.tilePosition.y += velocity
+            tile.tilePosition.y += velocity;
         }
     }
+    windowSprite.y += velocity;
 
     this.game._my_world.update();
     updateEntities.call(this);

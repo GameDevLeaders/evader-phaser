@@ -78,5 +78,20 @@ module.exports = {
         ROTTEN_CHEESE: "rotten_cheese",
         HIT: "hit",
         START: "start"
+    },
+    SPRITES: {
+        WINDOWS: [
+            'sprites.window.1',
+            'sprites.window.2',
+            'sprites.window.3',
+            'sprites.window.4'
+        ]
+    },
+    BUTTONS: {
+        PAUSE: "buttons.pauseButton",
+        SETTINGS: "buttons.settings"
+    },
+    SPEED:{
+        TILE: 0.2
     }
 };
