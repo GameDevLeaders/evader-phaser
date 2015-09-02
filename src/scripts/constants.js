@@ -80,5 +80,20 @@ module.exports = {
         START: "start",
         INTRO: "intro",
         MENU: "menu"
+    },
+    SPRITES: {
+        WINDOWS: [
+            'sprites.window.1',
+            'sprites.window.2',
+            'sprites.window.3',
+            'sprites.window.4'
+        ]
+    },
+    BUTTONS: {
+        PAUSE: "buttons.pauseButton",
+        SETTINGS: "buttons.settings"
+    },
+    SPEED:{
+        TILE: 0.2
     }
 };
