@@ -4,7 +4,7 @@ var Princess = require('../entities/princess');
 var World = require('../entities/world');
 var c = require('../constants');
 var SoundsManager = require('../sounds');
-
+var PrincessSettings = require('../partials/princess_settings');
 var cursors,
     cheeseGroup,
     enemyGroup,
@@ -30,7 +30,8 @@ play.prototype = {
     createEnemies: createEnemies,
     updateEnemies: updateEnemies,
     checkInputs: checkInputs,
-    activeCheese: null
+    activeCheese: null,
+    princessSettings: false
 };
 
 function preload() {
@@ -70,8 +71,8 @@ function repaintWindow(lWindow){
         key = getRandomWindowKey();
     }while(key === lWindow.key);
     lWindow.loadTexture(key);
-    //Put it 0 to 4 times the height above the screen.
-    lWindow.y = - ( Math.round(Math.random()*5) * lWindow.height ) ;
+    //Put it 0 to 4 times the height above the screen. +1 to prevent render on y (over the sreen) when 0.
+    lWindow.y = - ( ( Math.round(Math.random() * 4) + 1 ) * lWindow.height ) ;
 }
 function createWindow(){
     var game = this.game,
@@ -85,9 +86,14 @@ function createWindow(){
     windowSprite.body.velocity.y = 0;
     return windowSprite;
 }
+function nullifySettings(){
+    //>_> WHY THE FCK THIS IS NEEDED? It is not being re rendered and it is not being restarted, this is a hack )-:
+    this.princessSettings = null;
+}
 
 function create() {
     var that = this, tileSize = 0, tilesCount = 0;
+    nullifySettings.apply(this);
 
     enemiesPerLine = Math.ceil(this.game.width / 180);
     enemiesPerLine = enemiesPerLine < 3 ? 3 : enemiesPerLine;
@@ -128,7 +134,7 @@ function create() {
         this._bg.push(this.game.add.tileSprite(this.game.world.centerX + 320 / 2 + 2 - tileSize, i * tileSize, tileSize, tileSize, 'creeperR'));
     }
 
-    createWindow.call(this); // Add after bgs but before other entities
+    createWindow.apply(this); // Add after bgs but before other entities
 
     cheeseGroup = this.game.add.group();
     cheeseGroup.enableBody = true;
@@ -215,8 +221,8 @@ function create() {
         e.scale.setTo(0.75, 0.75);
     });
 
-    var spaceBarKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
-    spaceBarKey.onDown.add(shiftPause, this);
+    var escKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+    escKey.onDown.add(shiftPause, this);
 
     // Add a input listener that can help us return from being paused
     this.game.input.onDown.add(unpause, this);
@@ -225,7 +231,7 @@ function create() {
     function gameOver() {
         SM.stop(SM.SOUNDS.BACKGROUND);
         SM.play(SM.SOUNDS.DIES);
-        this.game.state.start('gameOver', true, false, this);
+        this.game.state.start(c.STATES.gameOver, true, false, this);
         return;
     }
 
@@ -417,17 +423,49 @@ function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function showSettings(){
+    var princessSettings = this.princessSettings;
+    if(!princessSettings){
+        //This is not being reached on restart, it works on gameover + start, but no with restart ):
+        princessSettings = this.princessSettings = new PrincessSettings(this.game);
+    }
+    princessSettings.show();
+}
+
+function hideSettings(){
+    var princessSettings = this.princessSettings;
+    princessSettings.hide();
+}
+
 function pause() {
     if (!this.game.paused) {
         this.game.paused = true;
         pauseButton.loadTexture('playButton');
+        showSettings.call(this);
     }
 }
-
-function unpause() {
+function localCollides(event, sprite){
+    var x = event.x,
+        y = event.y;
+    return x >= sprite.x && x <= (sprite.x + sprite.width) && y >= sprite.y && y <= sprite.y + sprite.height;
+}
+function unpause(event) {
+    var unpaused = false;
     if (this.game.paused) {
-        this.game.paused = false;
-        pauseButton.loadTexture(c.BUTTONS.PAUSE);
+        if(event){
+            //Coming from clicking the pause button (sends events)
+            if(localCollides(event, pauseButton)){
+                unpaused = true;
+            }
+        } else {
+            //Coming from ESC or any other event
+            unpaused = true;
+        }
+        if(unpaused){
+            this.game.paused = false;
+            pauseButton.loadTexture(c.BUTTONS.PAUSE);
+            hideSettings.call(this);
+        }
     }
 }
 

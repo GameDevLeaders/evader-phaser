@@ -87,7 +87,11 @@ module.exports = {
             'sprites.window.2',
             'sprites.window.3',
             'sprites.window.4'
-        ]
+        ],
+        SPEAKER_ON: "sprites.settings.speaker_on",
+        SPEAKER_OFF: "sprites.settings.speaker_off",
+        CLOSE: "sprites.settings.close",
+        RESTART: "sprites.settings.restart"
     },
     BUTTONS: {
         PAUSE: "buttons.pauseButton",
@@ -95,5 +99,9 @@ module.exports = {
     },
     SPEED:{
         TILE: 0.2
+    },
+    STATES: {
+        play: 'play',
+        gameOver: 'gameOver'
     }
 };
