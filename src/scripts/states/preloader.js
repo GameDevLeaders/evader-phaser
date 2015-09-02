@@ -87,6 +87,11 @@ Preloader.prototype.preload = function () {
     for(var i = 0, windowsSprites = c.SPRITES.WINDOWS, len = windowsSprites.length; i<len;i++){
         load.image(windowsSprites[i], 'sprites/window-' + ( i+1 )+ '.png'); //window-<1|4>.png
     }
+    load.image(c.SPRITES.SPEAKER_ON, 'sprites/speaker-on.png');
+    load.image(c.SPRITES.SPEAKER_OFF, 'sprites/speaker-off.png');
+    load.image(c.SPRITES.CLOSE, 'sprites/close.png');
+    load.image(c.SPRITES.RESTART, 'sprites/refresh.png');
+
     load.image('cheese', 'sprites/cheese.png');
     load.image('rotten-cheese', 'sprites/rottencheese.png');
     load.image(c.BUTTONS.PAUSE, 'button_pause.png');

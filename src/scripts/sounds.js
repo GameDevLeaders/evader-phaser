@@ -61,7 +61,22 @@ SoundsManager.prototype.stop = function (sound) {
     }
 };
 
-SoundsManager.prototype.toggle = function (on) {
+SoundsManager.prototype.toggle = function () {
+    this.active = !this.active;
+    if(!this.active){
+        this.stop(c.SOUNDS.START);
+        this.stop(c.SOUNDS.BACKGROUND);
+    }else{
+        this.play(c.SOUNDS.START);
+        this.play(c.SOUNDS.BACKGROUND, true);
+    }
+};
+
+SoundsManager.prototype.isActive = function () {
+    return this.active;
+};
+
+SoundsManager.prototype.setActive = function (on) {
     this.active = !!on;
 };
 
