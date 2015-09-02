@@ -77,7 +77,9 @@ module.exports = {
         CHEESE: "cheese",
         ROTTEN_CHEESE: "rotten_cheese",
         HIT: "hit",
-        START: "start"
+        START: "start",
+        INTRO: "intro",
+        MENU: "menu"
     },
     SPRITES: {
         WINDOWS: [

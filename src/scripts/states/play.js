@@ -17,7 +17,8 @@ var cursors,
     cropRect,
     fuelMaxW,
     enemiesPerLine,
-    windowSprite;
+    windowSprite,
+    pauseButton;
 
 var play = function (game) {
 };
@@ -161,14 +162,36 @@ function create() {
         resetCheese.call(that, cheese);
     });
 
-    fuelContainer = this.game.add.sprite(5, 5, 'fuel_container');
-    //30, 5 is the diff for the container into the first px to render the bar.
-    fuelBar = this.game.add.sprite(30 + 5, 5 + 5, 'fuel');
+    /** UI Elements **/
+
+    var pauseButtonX = this.game.width - 62;
+    var pauseButtonY = 10;
+    // 30, 5 is the diff for the container into the first px to render the bar.
+    var fuelContainerX = 10;
+    var fuelContainerY = 15;
+    var fuelBarX = 40;
+    var fuelBarY = 20;
+    var scoreTextX = 10;
+    var scoreTextY = 60;
+
+    pauseButton = this.game.add.sprite(pauseButtonX, pauseButtonY, c.BUTTONS.PAUSE);
+    pauseButton.scale.set(2, 2);
+    pauseButton.inputEnabled = true;
+    pauseButton.input.useHandCursor = true; //if you want a hand cursor
+    pauseButton.events.onInputDown.add(pause, this);
+
+    this.scoreText = this.game.add.bitmapText(scoreTextX + 120, scoreTextY, 'scoreFont', this.game._my_world.score, 24);
+    this.game.add.bitmapText(scoreTextX, scoreTextY, 'scoreFont', 'score:', 16);
+
+    fuelContainer = this.game.add.sprite(fuelContainerX, fuelContainerY, 'fuel_container');
+    fuelBar = this.game.add.sprite(fuelBarX, fuelBarY, 'fuel');
+
+    /** End UI Elements **/
+
     cropRect = new Phaser.Rectangle(0, 0, fuelBar.width, fuelBar.height);
     fuelMaxW = fuelBar.width;
     fuelBar.crop(cropRect);
     this.createEnemies();
-    this.scoreText = this.game.add.bitmapText(this.game.width - 10, 10, 'scoreFont', this.game._my_world.score, 30);
 
     addScore.call(this, 0);
 
@@ -192,12 +215,6 @@ function create() {
         e.scale.setTo(0.75, 0.75);
     });
 
-    var pauseButton = this.game.add.sprite(this.game.width / 2 - 30, 5 + 5, c.BUTTONS.PAUSE);
-    pauseButton.scale.set(0.3, 0.3);
-    pauseButton.inputEnabled = true;
-    pauseButton.input.useHandCursor = true; //if you want a hand cursor
-    pauseButton.events.onInputDown.add(pause, this);
-
     var spaceBarKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
     spaceBarKey.onDown.add(shiftPause, this);
 
@@ -219,15 +236,9 @@ function create() {
     SM.play(SM.SOUNDS.BACKGROUND, true);
 }
 
-function updateScoreX() {
-    //TODO: Refactor this to force right side align
-    this.scoreText.x = this.game.width - 30 - this.scoreText.width;
-}
-
 function addScore(points) {
     this.game._my_world.score += points;
     this.scoreText.text = this.game._my_world.score;
-    updateScoreX.call(this);
 }
 
 function updateEnemies() {
@@ -331,7 +342,6 @@ function updateCheeses() {
 }
 function updateEntities() {
     updateEnemies.call(this);
-    updateScoreX.call(this);
     updateCheeses.call(this);
     updateWindow.call(this);
 }
@@ -410,12 +420,14 @@ function getRandom(min, max) {
 function pause() {
     if (!this.game.paused) {
         this.game.paused = true;
+        pauseButton.loadTexture('playButton');
     }
 }
 
 function unpause() {
     if (this.game.paused) {
         this.game.paused = false;
+        pauseButton.loadTexture(c.BUTTONS.PAUSE);
     }
 }
 

@@ -2,9 +2,11 @@
 
 var intro = function(game) {};
 var c = require('../constants');
+var SoundsManager = require('../sounds');
 var background;
 var characters;
 var timer;
+var SM;
 
 
 intro.prototype = introState();
@@ -21,6 +23,9 @@ function introState () {
     }
 
     function create () {
+      SM = new SoundsManager(this.game);
+      SM.create();
+      SM.play(SM.SOUNDS.INTRO, true);
 
         this.game.add.sprite(this.game.world.centerX - 200, this.game.world.centerY/2, 'bg-castle');
         var prince = this.game.add.sprite(this.game.world.centerX - 100, this.game.world.centerY/2 + 50, 'prince');
@@ -46,11 +51,13 @@ function introState () {
 
     function update () {
         if (this.game.input.activePointer.isDown) {
-        this.game.state.start('play');
-    }
+          SM.stop(SM.SOUNDS.INTRO);
+             this.game.state.start('play');
+        }
     }
 
     function startGame() {
+      SM.stop(SM.SOUNDS.INTRO);
         this.game.state.start('play');
     }
 

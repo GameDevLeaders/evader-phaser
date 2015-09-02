@@ -35,7 +35,10 @@ SoundsManager.prototype.create = function () {
         cheese: this.game.add.audio(SOUNDS.CHEESE),
         rotten_cheese: this.game.add.audio(SOUNDS.ROTTEN_CHEESE),
         background: this.game.add.audio(SOUNDS.BACKGROUND),
-        hit: this.game.add.audio(SOUNDS.HIT)
+        hit: this.game.add.audio(SOUNDS.HIT),
+        menu: this.game.add.audio(SOUNDS.MENU),
+        intro: this.game.add.audio(SOUNDS.INTRO),
+        start: this.game.add.audio(SOUNDS.START)
     };
 };
 

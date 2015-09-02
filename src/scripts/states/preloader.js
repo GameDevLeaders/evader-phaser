@@ -22,12 +22,14 @@ Preloader.prototype.preload = function () {
      * Music & sounds
      */
 
-    load.audio(c.SOUNDS.BACKGROUND, 'audio/background_music.mp3');
+    load.audio(c.SOUNDS.BACKGROUND, 'audio/juego.mp3');
     load.audio(c.SOUNDS.START, 'audio/start.mp3');
     load.audio(c.SOUNDS.HIT, 'audio/hit.wav');
     load.audio(c.SOUNDS.CHEESE, 'audio/cheese.wav');
     load.audio(c.SOUNDS.DIES, 'audio/dies.wav');
     load.audio(c.SOUNDS.ROTTEN_CHEESE, 'audio/rotten_cheese.mp3');
+    load.audio(c.SOUNDS.MENU, 'audio/menu_otheroption.mp3');
+    load.audio(c.SOUNDS.INTRO, 'audio/intro.mp3');
 
     /**
      * Assets for bootGame.js
@@ -77,14 +79,19 @@ Preloader.prototype.preload = function () {
     load.image('fire1', 'fire1.png');
     load.image('fire2', 'fire2.png');
     load.image('fire3', 'fire3.png');
+    load.image('window1', 'sprites/window-1.png');
+    load.image('window2', 'sprites/window-2.png');
+    load.image('window3', 'sprites/window-3.png');
+    load.image('window4', 'sprites/window-4.png');
     load.image('smoke', 'smoke-puff.png');
-    load.image(c.BUTTONS.PAUSE, 'pause.png');
-    load.image(c.BUTTONS.SETTINGS, 'settings.png');
     for(var i = 0, windowsSprites = c.SPRITES.WINDOWS, len = windowsSprites.length; i<len;i++){
         load.image(windowsSprites[i], 'sprites/window-' + ( i+1 )+ '.png'); //window-<1|4>.png
     }
     load.image('cheese', 'sprites/cheese.png');
     load.image('rotten-cheese', 'sprites/rottencheese.png');
+    load.image(c.BUTTONS.PAUSE, 'button_pause.png');
+    load.image('playButton', 'button_play.png');
+    load.image(c.BUTTONS.SETTINGS, 'settings.png');
     load.spritesheet('princess', 'sprites/princess.png', c.PRINCESS_WIDTH, c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
     load.spritesheet('lumberjack', 'sprites/lumberjack-s.png', c.LUMBERJACK_WIDTH, c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);
     load.spritesheet('wolf', 'sprites/wolf.png', c.WOLF_WIDTH, c.WOLF_HEIGHT, c.WOLF_SPRITES);
