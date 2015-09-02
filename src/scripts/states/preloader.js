@@ -87,19 +87,20 @@ Preloader.prototype.preload = function () {
     for(var i = 0, windowsSprites = c.SPRITES.WINDOWS, len = windowsSprites.length; i<len;i++){
         load.image(windowsSprites[i], 'sprites/window-' + ( i+1 )+ '.png'); //window-<1|4>.png
     }
-    load.image(c.SPRITES.SPEAKER_ON, 'sprites/speaker-on.png');
-    load.image(c.SPRITES.SPEAKER_OFF, 'sprites/speaker-off.png');
-    load.image(c.SPRITES.CLOSE, 'sprites/close.png');
-    load.image(c.SPRITES.RESTART, 'sprites/refresh.png');
 
     load.image('cheese', 'sprites/cheese.png');
     load.image('rotten-cheese', 'sprites/rottencheese.png');
     load.image(c.BUTTONS.PAUSE, 'button_pause.png');
     load.image('playButton', 'button_play.png');
-    load.image(c.BUTTONS.SETTINGS, 'settings.png');
     load.spritesheet('princess', 'sprites/princess.png', c.PRINCESS_WIDTH, c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
     load.spritesheet('lumberjack', 'sprites/lumberjack-s.png', c.LUMBERJACK_WIDTH, c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);
     load.spritesheet('wolf', 'sprites/wolf.png', c.WOLF_WIDTH, c.WOLF_HEIGHT, c.WOLF_SPRITES);
+
+    /* Settings assets */
+    load.image(c.SPRITES.SPEAKER_ON, 'sprites/speaker-on.png');
+    load.image(c.SPRITES.SPEAKER_OFF, 'sprites/speaker-off.png');
+    load.image(c.SPRITES.CLOSE, 'sprites/close.png');
+    load.image(c.SPRITES.RESTART, 'sprites/refresh.png');
 };
 
 Preloader.prototype.create = function () {
