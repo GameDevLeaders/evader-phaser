@@ -151,7 +151,7 @@
             speaker.loadTexture(c.SPRITES.SPEAKER_OFF);
         }
     };
-    PrincessSettings.prototype.clickEvent = function(evt){
+    PrincessSettings.prototype.clickEvent = function(event){
         if(localCollides(event, close)){
             this.hide();
         } else if(localCollides(event, speaker)){

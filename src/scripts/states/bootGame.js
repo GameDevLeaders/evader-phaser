@@ -82,7 +82,7 @@ function bootGameState() {
     }
 
     function startGame() {
-      SM.stop(SM.SOUNDS.MENU);
+        SM.stop(SM.SOUNDS.MENU);
         this.game.state.start('intro');
     }
 }
