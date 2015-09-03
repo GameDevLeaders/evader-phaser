@@ -23,6 +23,7 @@ Boot.prototype.create = function () {
     this.scale.pageAlignHorizontally = true;
     this.scale.pageAlignVertically = true;
     this.scale.updateLayout(true);
+    this.stage.smoothed = false;
 
     this.state.start('preloader');
 };

@@ -93,6 +93,9 @@ Preloader.prototype.preload = function () {
     load.image('rotten-cheese', 'sprites/rottencheese.png');
     load.image(c.BUTTONS.PAUSE, 'button_pause.png');
     load.image('playButton', 'button_play.png');
+    load.image('fbButton', 'button_fb.png');
+    load.image('twButton', 'button_tw.png');
+    load.image('retryButton', 'button_retry.png');
     load.spritesheet('princess', 'sprites/princess.png', c.PRINCESS_WIDTH, c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
     load.spritesheet('lumberjack', 'sprites/lumberjack-s.png', c.LUMBERJACK_WIDTH, c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);
     load.spritesheet('wolf', 'sprites/wolf.png', c.WOLF_WIDTH, c.WOLF_HEIGHT, c.WOLF_SPRITES);

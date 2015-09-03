@@ -213,7 +213,7 @@ function create() {
     cursors = this.game.input.keyboard.createCursorKeys();
 
     this.game.touchControl = this.game.plugins.add(Phaser.Plugin.TouchControl);
-    this.game.touchControl.inputEnable();
+    this.game.touchControl.inputEnable(0, 0, this.stage.width, this.stage.height);
     this.game.touchControl.settings.maxDistanceInPixels = 100;
     this.game.touchControl.settings.singleDirection = true;
 
