@@ -24,9 +24,9 @@ function bootGameState() {
 
     function create() {
 
-      SM = new SoundsManager(this.game);
-      SM.create();
-      SM.play(SM.SOUNDS.MENU, true);
+        SM = new SoundsManager(this.game);
+        SM.create();
+        SM.play(SM.SOUNDS.MENU, true);
 
         background = this.game.add.tileSprite(0, 0, this.game.stage.width, this.game.cache.getImage('sky').height, 'sky');
 

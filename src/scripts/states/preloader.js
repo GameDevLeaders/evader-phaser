@@ -35,6 +35,7 @@ Preloader.prototype.preload = function () {
      * Assets for bootGame.js
      */
 
+    load.image('informal-penguins', 'informal-penguins.jpg');
     load.image('logo', 'logo.png');
     load.image('hand', 'hand3.png');
     load.image('instructions', 'instr.png');
@@ -104,5 +105,5 @@ Preloader.prototype.preload = function () {
 };
 
 Preloader.prototype.create = function () {
-    this.game.state.start('bootGame');
+    this.game.state.start('company');
 };
