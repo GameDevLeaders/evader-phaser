@@ -77,9 +77,19 @@ function gameOverState() {
 
     function shareOnFb() {
         console.log('fb');
-        var app_id = '';
-        var caption = '';
-        var link = '';
+        var url = 'https://www.facebook.com/dialog/feed?';
+        var app_id = '755134377952167';
+        var caption = 'I scored ' + this.game._my_world.score + ' at RocketPrincess! - http://informalpenguins.com/rocket-princess/';
+        var link = 'http://informalpenguins.com/rocket-princess/';
+        var redirect_uri = 'http://informalpenguins.com/rocket-princess/';
+
+        var params = 'app_id=' + app_id +
+            '&display=popup' +
+            '&caption=' + caption +
+            '&link=' + link +
+            '&redirect_uri=' + redirect_uri;
+
+        window.open(url + encodeURIComponent(params), '_blank');
 
         //https://www.facebook.com/dialog/feed?
         //    app_id=145634995501895
