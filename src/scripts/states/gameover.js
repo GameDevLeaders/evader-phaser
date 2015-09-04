@@ -86,7 +86,7 @@ function gameOverState() {
             '&display=popup' +
             '&caption=' + encodeURIComponent(caption) +
             '&link=' + link +
-            '&redirect_uri=' + link;
+            '&redirect_uri=http://facebook.com';
 
         window.open(url + params, '_blank');
     }
