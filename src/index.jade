@@ -5,10 +5,21 @@ html(lang='en')
         meta(name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no')
         title= name
         link(rel='stylesheet' href='css/style.css')
-        meta(name='description' content='Vertical scroller, bet your highest score!')
-        meta(name='keywords' content='rocket, princess, javascript')
+        meta(name='description' content='#{description}')
+        meta(name='keywords' content='#{keywords}')
+
+        meta(property='og:title' content='#{name}')
+        meta(property='og:site_name' content='#{name}')
+        meta(property='og:description' content='#{description}')
+        meta(property='fb:app_id' content='#{app_id}')
+        meta(property='og:type' content='website')
+        meta(property='og:locale' content='en_US')
+        // meta(property='og:locale:alternate' content='es_MX') this is used when we implement translations
+        meta(property='og:image' content='#{image}')
+        //meta(property='og:url' content='#{canonical_url}')
     body
         div(id='content')
+        .fb-like(data-share='true' data-width='450' data-show-faces='true')
 
         script(src='js/phaser.min.js')
         script(src='js/phaser-touch-control.js')

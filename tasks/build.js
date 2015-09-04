@@ -77,7 +77,7 @@ gulp.task('build:fonts', function () {
 });
 
 gulp.task('build:images', function () {
-  return gulp.src(['./assets/**/*.jpg', './assets/**/*.png'])
+  return gulp.src(['./assets/**/*.jpg', './assets/**/*.png', './assets/**/*.gif'])
     .pipe(imagemin())
     .pipe(gulp.dest('./build/assets/'))
     .pipe(browserSync.reload({stream: true, once: true}));
@@ -89,6 +89,11 @@ gulp.task('build:html', function () {
       pretty: !program.prod,
       data: {
         name: cfg.name,
+        description: cfg.description,
+        canonical_url: cfg.canonical_url,
+        keywords: cfg.keywords,
+        app_id: cfg.app_id,
+        image: cfg.image,
         debug: !program.prod
       }
     }))

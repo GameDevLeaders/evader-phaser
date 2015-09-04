@@ -2,10 +2,12 @@
 
 var cfg = require('../../../config');
 var Hand = require('../entities/hand');
+var SoundsManager = require('../sounds');
 var bootGame = function(game) {};
 var timer = {};
 var interval = {};
 var background;
+var SM;
 
 bootGame.prototype = bootGameState();
 
@@ -17,14 +19,15 @@ function bootGameState() {
     };
 
     function preload() {
-        this.game.load.bitmapFont('scoreFont', 'assets/fonts/bitmapFonts/carrier_command.png', 'assets/fonts/bitmapFonts/carrier_command.xml');
-        this.game.load.image('logo', 'assets/logo.png');
-        this.game.load.image('hand', 'assets/hand3.png');
-        this.game.load.image('instructions', 'assets/instr.png');
-        this.game.load.image('sky', 'assets/sprites/sky.png');
+        // This should be empty. To load something please use preloader.js
     }
 
     function create() {
+
+        SM = new SoundsManager(this.game);
+        SM.create();
+        SM.play(SM.SOUNDS.MENU, true);
+
         background = this.game.add.tileSprite(0, 0, this.game.stage.width, this.game.cache.getImage('sky').height, 'sky');
 
         this.game.add.bitmapText(5, this.game.height - 10, 'scoreFont', cfg.version, 8);
@@ -79,7 +82,8 @@ function bootGameState() {
     }
 
     function startGame() {
-        this.game.state.start('play');
+        SM.stop(SM.SOUNDS.MENU);
+        this.game.state.start('intro');
     }
 }
 

@@ -95,6 +95,7 @@ Princess.prototype.checkFuel = function () {
 function time() {
     return new Date().getTime();
 }
+
 Princess.prototype.move = function move(direction) {
     // Set new facing direction
     var data = this._data;
