@@ -81,7 +81,7 @@ function gameOverState() {
         var app_id = '755134377952167';
         var caption = 'I scored ' + this.game._my_world.score + ' at RocketPrincess! - http://informalpenguins.com/rocket-princess/';
         var link = 'http://informalpenguins.com/rocket-princess/';
-        var redirect_uri = 'http://informalpenguins.com/rocket-princess/';
+        var redirect_uri = 'http://rocketprincess.informalpenguins.com';
 
         var params = 'app_id=' + app_id +
             '&display=popup' +
@@ -102,7 +102,7 @@ function gameOverState() {
         //share score on twitter
         console.log('tw');
         var tweetbegin = 'http://twitter.com/home?status=';
-        var tweettxt = 'I scored ' + this.game._my_world.score + ' at RocketPrincess! - http://informalpenguins.com/rocket-princess/';
+        var tweettxt = 'I scored ' + this.game._my_world.score + ' at #rocketPrincess - http://rocketprincess.informalpenguins.com';
         var finaltweet = tweetbegin + encodeURIComponent(tweettxt);
         window.open(finaltweet, '_blank');
     }
