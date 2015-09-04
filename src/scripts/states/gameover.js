@@ -1,5 +1,6 @@
 'use strict';
 
+var cfg = require('../../../config');
 var HighScore = require('../highscore');
 
 var gameOver = function (game) {
@@ -76,35 +77,27 @@ function gameOverState() {
     }
 
     function shareOnFb() {
-        console.log('fb');
         var url = 'https://www.facebook.com/dialog/feed?';
-        var app_id = '755134377952167';
-        var caption = 'I scored ' + this.game._my_world.score + ' at RocketPrincess! - http://informalpenguins.com/rocket-princess/';
-        var link = 'http://informalpenguins.com/rocket-princess/';
-        var redirect_uri = 'http://rocketprincess.informalpenguins.com';
+        var app_id = cfg.app_id;
+        var caption = 'I just scored ' + this.game._my_world.score + '!';
+        var link = cfg.canonical_url;
 
         var params = 'app_id=' + app_id +
             '&display=popup' +
-            '&caption=' + caption +
+            '&caption=' + encodeURIComponent(caption) +
             '&link=' + link +
-            '&redirect_uri=' + redirect_uri;
+            '&redirect_uri=' + link;
 
-        window.open(url + encodeURIComponent(params), '_blank');
-
-        //https://www.facebook.com/dialog/feed?
-        //    app_id=145634995501895
-        //    &display=popup&caption=An%20example%20caption
-        //    &link=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2F
-        //    &redirect_uri=https://developers.facebook.com/tools/explorer
+        window.open(url + params, '_blank');
     }
 
     function shareOnTw() {
-        //share score on twitter
-        console.log('tw');
-        var tweetbegin = 'http://twitter.com/home?status=';
-        var tweettxt = 'I scored ' + this.game._my_world.score + ' at #rocketPrincess - http://rocketprincess.informalpenguins.com';
-        var finaltweet = tweetbegin + encodeURIComponent(tweettxt);
-        window.open(finaltweet, '_blank');
+        var url = 'http://twitter.com/home?';
+        var status = 'I scored ' + this.game._my_world.score + ' at #rocketPrincess - ' + cfg.canonical_url;
+
+        var params = 'status=' + encodeURIComponent(status);
+
+        window.open(url + params, '_blank');
     }
 }
 
