@@ -5,18 +5,18 @@ html(lang='en')
         meta(name='viewport' content='width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no')
         title= name
         link(rel='stylesheet' href='css/style.css')
-        meta(name='description' content='Vertical scroller, bet your highest score!')
-        meta(name='keywords' content='rocket, princess, javascript')
+        meta(name='description' content='#{description}')
+        meta(name='keywords' content='#{keywords}')
 
-        meta(property='og:title' content='RocketPrincess')
-        meta(property='og:site_name' content='')
-        meta(property='og:url' content='http://informalpenguins.com/rocket-princess/')
-        meta(property='og:description' content='')
-        meta(property='fb:app_id' content='755134377952167')
+        meta(property='og:title' content='#{name}')
+        meta(property='og:site_name' content='#{name}')
+        meta(property='og:url' content='#{canonical_url}')
+        meta(property='og:description' content='#{description}')
+        meta(property='fb:app_id' content='#{app_id}')
         meta(property='og:type' content='website')
         meta(property='og:locale' content='en_US')
         // meta(property='og:locale:alternate' content='es_MX') this is used when we implement translations
-        meta(property='og:image' content='http://i.imgur.com/yVs3Uag.png')
+        meta(property='og:image' content='#{image}')
     body
         div(id='content')
 
