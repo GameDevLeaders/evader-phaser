@@ -61,14 +61,33 @@ SoundsManager.prototype.stop = function (sound) {
     }
 };
 
-SoundsManager.prototype.toggle = function () {
+var _regularSounds = {
+        play: [c.SOUNDS.START]
+    }, _continuousSounds = {
+        play: [c.SOUNDS.BACKGROUND],
+        boot: [c.SOUNDS.MENU]
+    };
+
+SoundsManager.prototype.toggle = function (screen) {
     this.active = !this.active;
+    var regularSounds = _regularSounds[screen] || [],
+        continuousSounds = _continuousSounds[screen] || [],
+        i,
+        len;
     if(!this.active){
-        this.stop(c.SOUNDS.START);
-        this.stop(c.SOUNDS.BACKGROUND);
+        for(i = 0, len = regularSounds.length;i<len;i++){
+            this.stop(regularSounds[i]);
+        }
+        for(i = 0, len = continuousSounds.length;i<len;i++){
+            this.stop(continuousSounds[i]);
+        }
     }else{
-        this.play(c.SOUNDS.START);
-        this.play(c.SOUNDS.BACKGROUND, true);
+        for(i = 0, len = regularSounds.length;i<len;i++){
+            this.play(regularSounds[i]);
+        }
+        for(i = 0, len = continuousSounds.length;i<len;i++){
+            this.play(continuousSounds[i], true);
+        }
     }
 };
 

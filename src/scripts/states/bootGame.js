@@ -1,13 +1,15 @@
 'use strict';
 
-var cfg = require('../../../config');
-var Hand = require('../entities/hand');
-var SoundsManager = require('../sounds');
-var bootGame = function(game) {};
-var timer = {};
-var interval = {};
-var background;
-var SM;
+var cfg = require('../../../config'),
+    Hand = require('../entities/hand'),
+    SoundsManager = require('../sounds'),
+    c = require('../constants'),
+    bootGame = function(game) {},
+    timer = {},
+    interval = {},
+    background,
+    speaker,
+    SM;
 
 bootGame.prototype = bootGameState();
 
@@ -39,7 +41,7 @@ function bootGameState() {
         spaceBarKey.onDown.add(startGame, this);
 
         this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
-        this.input.onDown.add(startGame, this);
+        this.input.onDown.add(mouseClicked, this);
 
         var instructions = this.game.add.sprite(this.game.world.centerX - 150, this.game.world.height - 420, 'instructions');
 
@@ -75,6 +77,30 @@ function bootGameState() {
         }, this);
 
         tweenHandHorizontalMove.start();
+
+
+        speaker = this.game.add.sprite(instructions.width + instructions.x + 50, this.game.world.height - 100, c.SPRITES.SPEAKER_ON);
+    }
+    function mouseClicked(event){
+        if(localCollides(event, speaker)){
+            toggleSound("boot");
+        } else {
+            startGame.apply(this);
+        }
+    }
+
+    function localCollides(event, sprite){
+        var x = event.x,
+            y = event.y;
+        return x >= sprite.x && x <= (sprite.x + sprite.width) && y >= sprite.y && y <= sprite.y + sprite.height;
+    }
+    function toggleSound(){
+        SM.toggle("boot");
+        if(SM.isActive()){
+            speaker.loadTexture(c.SPRITES.SPEAKER_ON);
+        } else {
+            speaker.loadTexture(c.SPRITES.SPEAKER_OFF);
+        }
     }
 
     function update() {
