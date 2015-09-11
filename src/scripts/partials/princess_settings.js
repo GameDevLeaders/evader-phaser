@@ -9,9 +9,9 @@
         speaker;
     function PrincessSettings(game){
         this.game = game;
+        SM = new SoundsManager(game);
         this.setupFrames();
         this.setupButtons();
-        SM = new SoundsManager(game);
 
         game.input.onDown.add(this.clickEvent, this);
     }
@@ -93,11 +93,12 @@
         speaker.visible = true;
     };
     PrincessSettings.prototype.setupButtons = function(){
-        var game = this.game;
+        var game = this.game,
+            areSoundsOn = SM.isActive();
         close = game.add.sprite(0,0, c.SPRITES.CLOSE);
         close.scale.set(0.4, 0.4);
         restart = game.add.sprite(0,0, c.SPRITES.RESTART);
-        speaker = game.add.sprite(0,0, c.SPRITES.SPEAKER_ON);
+        speaker = game.add.sprite(0,0, areSoundsOn ? c.SPRITES.SPEAKER_ON:c.SPRITES.SPEAKER_OFF);
 
         game.physics.arcade.enable(close);
         game.physics.arcade.enable(restart);
@@ -144,7 +145,7 @@
     };
 
     PrincessSettings.prototype.toggleSound = function(){
-        SM.toggle();
+        SM.toggle("play");
         if(SM.isActive()){
             speaker.loadTexture(c.SPRITES.SPEAKER_ON);
         } else {
@@ -155,7 +156,7 @@
         if(localCollides(event, close)){
             this.hide();
         } else if(localCollides(event, speaker)){
-            this.toggleSound();
+            this.toggleSound("play");
         } else if(localCollides(event, restart)){
             this.restart();
         }
