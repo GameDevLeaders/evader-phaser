@@ -89,6 +89,11 @@ gulp.task('build:html', function () {
       pretty: !program.prod,
       data: {
         name: cfg.name,
+        description: cfg.description,
+        canonical_url: cfg.canonical_url,
+        keywords: cfg.keywords,
+        app_id: cfg.app_id,
+        image: cfg.image,
         debug: !program.prod
       }
     }))
