@@ -66,9 +66,6 @@ function bootGameState() {
         tweenHandHorizontalMove.onComplete.add(function() {
             tweenHandVerticalMove.onComplete.add(function() {
                 tweenHandArbitraryMove.onComplete.add(function() {
-                    //tweenHandScale.onLoop.add(function() {
-                    //    this.game.add.bitmapText(hand.position.x, hand.position.y - 10, 'scoreFont', 'Tap to start', 10);
-                    //}, this);
                     tweenHandScale.start();
                 }, this);
                 tweenHandArbitraryMove.start();
@@ -78,8 +75,7 @@ function bootGameState() {
 
         tweenHandHorizontalMove.start();
 
-
-        speaker = this.game.add.sprite(instructions.width + instructions.x + 50, this.game.world.height - 100, c.SPRITES.SPEAKER_ON);
+        speaker = this.game.add.sprite(this.game.world.width - 60, this.game.world.height - 60, c.SPRITES.SPEAKER_ON);
     }
     function mouseClicked(event){
         if(localCollides(event, speaker)){

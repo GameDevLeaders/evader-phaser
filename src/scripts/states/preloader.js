@@ -87,6 +87,7 @@ Preloader.prototype.preload = function () {
     load.image('smoke', 'smoke-puff.png');
     for(var i = 0, windowsSprites = c.SPRITES.WINDOWS, len = windowsSprites.length; i<len;i++){
         load.image(windowsSprites[i], 'sprites/window-' + ( i+1 )+ '.png'); //window-<1|4>.png
+        // flojo XD
     }
 
     load.image('cheese', 'sprites/cheese.png');
