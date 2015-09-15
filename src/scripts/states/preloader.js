@@ -108,7 +108,7 @@ Preloader.prototype.preload = function () {
     load.image(c.SPRITES.RESTART, 'sprites/refresh.png');
 
     /*game over sprite*/
-    load.image('princessgameover', 'gameover.png');
+    load.spritesheet('gameover', 'gameover.png', 200, 150, 2);
 };
 
 Preloader.prototype.create = function () {
