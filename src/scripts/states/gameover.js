@@ -55,7 +55,7 @@ function gameOverState() {
         twButton.input.useHandCursor = true;
         twButton.events.onInputDown.add(shareOnTw, this);
 
-        princess = this.game.add.sprite(this.world.centerX - 110, this.game.height - 200, 'princesssurprise');
+        princess = this.game.add.sprite(this.world.centerX - 110, this.game.height - 200, 'princessgameover');
         princess.scale.set(1.2, 1.2);
 
         var tweenPrincess = this.game.add.tween(princess).to({x: princess.position.x + 100}, 4000, Phaser.Easing.Quadratic.InOut, true, 0, 1, true);

@@ -106,6 +106,9 @@ Preloader.prototype.preload = function () {
     load.image(c.SPRITES.SPEAKER_OFF, 'sprites/speaker-off.png');
     load.image(c.SPRITES.CLOSE, 'sprites/close.png');
     load.image(c.SPRITES.RESTART, 'sprites/refresh.png');
+
+    /*game over sprite*/
+    load.image('princessgameover', 'gameover.png');
 };
 
 Preloader.prototype.create = function () {
