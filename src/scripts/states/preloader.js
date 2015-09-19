@@ -56,7 +56,7 @@ Preloader.prototype.preload = function () {
     load.spritesheet('flyingprincess', 'intro-animation/princessflies.png', c.FLYINGPRINCESS_WIDTH, c.FLYINGPRINCESS_HEIGHT, c.FLYTINGPRINCESS_SPRITES);
     load.spritesheet('towerdown', 'intro-animation/towerdown.png', c.TOWER_WIDTH, c.TOWER_HEIGHT, c.TOWER_SPRITES);
     load.spritesheet('towerup', 'intro-animation/towerup.png', c.TOWER_WIDTH, c.TOWER_HEIGHT, c.TOWER_SPRITES);
-    load.spritesheet('hada', 'intro-animation/hada.png', c.HADA_WIDTH, c.HADA_HEIGHT, c.HADA_SPRITES);
+    load.spritesheet(c.SPRITES.HADA, 'intro-animation/hada.png', c.HADA_WIDTH, c.HADA_HEIGHT, c.HADA_SPRITES);
     load.spritesheet('mouse', 'intro-animation/mouse.png', c.MOUSE_WIDTH, c.MOUSE_HEIGHT, c.MOUSE_SPRITES);
     load.spritesheet('prince', 'intro-animation/prince.png', c.PRINCE_WIDTH, c.PRINCE_HEIGHT, c.PRINCE_SPRITES);
     load.spritesheet('princessgrabbed', 'intro-animation/princessGrabbed.png', c.PRINCESSGRABBED_WIDTH, c.PRINCESSGRABBED_HEIGHT, c.PRINCESSGRABBED_SPRITES);
@@ -104,6 +104,7 @@ Preloader.prototype.preload = function () {
     /* Settings assets */
     load.image(c.SPRITES.SPEAKER_ON, 'sprites/speaker-on.png');
     load.image(c.SPRITES.SPEAKER_OFF, 'sprites/speaker-off.png');
+    load.image(c.SPRITES.CREDITS, 'sprites/credits.png');
     load.image(c.SPRITES.CLOSE, 'sprites/close.png');
     load.image(c.SPRITES.RESTART, 'sprites/refresh.png');
 
