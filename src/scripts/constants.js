@@ -91,7 +91,9 @@ module.exports = {
         SPEAKER_ON: "sprites.settings.speaker_on",
         SPEAKER_OFF: "sprites.settings.speaker_off",
         CLOSE: "sprites.settings.close",
-        RESTART: "sprites.settings.restart"
+        RESTART: "sprites.settings.restart",
+        CREDITS: "sprites.settings.credits",
+        HADA: 'hada'
     },
     BUTTONS: {
         PAUSE: "buttons.pauseButton",
@@ -103,5 +105,24 @@ module.exports = {
     STATES: {
         play: 'play',
         gameOver: 'gameOver'
+    },
+    TEXT: {
+        CREDITS: "- Informal Penguins -" +
+                "\n" +
+                "\n" +
+                 "Team:" +
+                 //"\n" +
+                 //"- Antonio Monge" +
+                "\n" +
+                "- Hector Benitez" +
+                "\n" +
+                "- Isaac Zepeda" +
+                "\n" +
+                "- Porfirio Partida" +
+                "\n" +
+                "- Thannia Blanchet" +
+                "\n" +
+                "- Tony Martinez"
+        //ordered by: http://www.online-utility.org/text/sort.jsp
     }
 };
