@@ -58,35 +58,35 @@ function createCheeses() {
     rottenCheese.fuel = -1 * (c.CHEESE_FUEL / 2);
     this.activeCheese = null;
 }
-function getRandomWindowKey(){
-    var randomWindow = Math.round(Math.random()*4),
+function getRandomWindowKey() {
+    var randomWindow = Math.round(Math.random() * 4),
         windowsSprites = c.SPRITES.WINDOWS;
 
-    return windowsSprites[randomWindow] ||  windowsSprites[0];
+    return windowsSprites[randomWindow] || windowsSprites[0];
 }
-function repaintWindow(lWindow){
+function repaintWindow(lWindow) {
     var key;
     do {
         //Make sure we don't repeat same window?
         key = getRandomWindowKey();
-    }while(key === lWindow.key);
+    } while (key === lWindow.key);
     lWindow.loadTexture(key);
     //Put it 0 to 4 times the height above the screen. +1 to prevent render on y (over the sreen) when 0.
-    lWindow.y = - ( ( Math.round(Math.random() * 4) + 1 ) * lWindow.height ) ;
+    lWindow.y = -( ( Math.round(Math.random() * 4) + 1 ) * lWindow.height );
 }
-function createWindow(){
+function createWindow() {
     var game = this.game,
         key = getRandomWindowKey(),
         x;
-    windowSprite = game.add.sprite(0,0, key);
-    x = this.game.width/2 - windowSprite.width/2;
+    windowSprite = game.add.sprite(0, 0, key);
+    x = this.game.width / 2 - windowSprite.width / 2;
     windowSprite.x = x;
     windowSprite.y = 0;
     game.physics.arcade.enable(windowSprite);
     windowSprite.body.velocity.y = 0;
     return windowSprite;
 }
-function nullifySettings(){
+function nullifySettings() {
     //>_> WHY THE FCK THIS IS NEEDED? It is not being re rendered and it is not being restarted, this is a hack )-:
     this.princessSettings = null;
 }
@@ -104,12 +104,9 @@ function create() {
         lineSize: enemiesPerLine
     });
 
-//    console.log(this.game.world.width);
     //TODO: Mover el bg a world.js/Background.js ?
     this._bg = [];
-//    this._clouds = [];
-//    this._creepers = [];
-    //Adding the clouds
+
     tilesCount = 2;
     var tile, i;
     for (i = 0; i < tilesCount; i++) {
@@ -212,14 +209,7 @@ function create() {
 
     cursors = this.game.input.keyboard.createCursorKeys();
 
-    this.game.touchControl = this.game.plugins.add(Phaser.Plugin.TouchControl);
-    this.game.touchControl.inputEnable(0, 0, this.stage.width, this.stage.height);
-    this.game.touchControl.settings.maxDistanceInPixels = 100;
-    this.game.touchControl.settings.singleDirection = true;
-
-    this.game.touchControl.imageGroup.forEach(function (e) {
-        e.scale.setTo(0.75, 0.75);
-    });
+    createJoystick.call(this);
 
     var escKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
     escKey.onDown.add(shiftPause, this);
@@ -229,6 +219,7 @@ function create() {
 
     SM = new SoundsManager(this.game);
     function gameOver() {
+        createJoystick.call(this);
         SM.stop(SM.SOUNDS.BACKGROUND);
         SM.play(SM.SOUNDS.DIES);
         this.game.state.start(c.STATES.gameOver, true, false, this);
@@ -240,6 +231,17 @@ function create() {
     SM.create();
     SM.play(SM.SOUNDS.START);
     SM.play(SM.SOUNDS.BACKGROUND, true);
+}
+
+function createJoystick() {
+    this.game.touchControl = this.game.plugins.add(Phaser.Plugin.TouchControl);
+    this.game.touchControl.inputEnable(0, 0, this.stage.width, this.stage.height);
+    this.game.touchControl.settings.maxDistanceInPixels = 100;
+    this.game.touchControl.settings.singleDirection = true;
+
+    this.game.touchControl.imageGroup.forEach(function (e) {
+        e.scale.setTo(0.75, 0.75);
+    });
 }
 
 function addScore(points) {
@@ -310,7 +312,7 @@ function checkInputs() {
 }
 
 function resetCheese(currentCheese) {
-    var newX =  Math.floor(Math.random() * this.game.width);
+    var newX = Math.floor(Math.random() * this.game.width);
     currentCheese.y = -100 - 10 * Math.floor(Math.random() * 10);
     currentCheese.x = newX;
     currentCheese.body.velocity.y = 0;
@@ -351,12 +353,12 @@ function updateEntities() {
     updateCheeses.call(this);
     updateWindow.call(this);
 }
-    function updateWindow(){
-        if (windowSprite.body.y > this.game.height) {
-            //Cheese lost.
-            repaintWindow.call(this, windowSprite);
-        }
+function updateWindow() {
+    if (windowSprite.body.y > this.game.height) {
+        //Cheese lost.
+        repaintWindow.call(this, windowSprite);
     }
+}
 
 function update() {
     var velocity = parseInt(this.game._my_world.velocity / 50), tile;
@@ -423,16 +425,16 @@ function getRandom(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function showSettings(){
+function showSettings() {
     var princessSettings = this.princessSettings;
-    if(!princessSettings){
+    if (!princessSettings) {
         //This is not being reached on restart, it works on gameover + start, but no with restart ):
         princessSettings = this.princessSettings = new PrincessSettings(this.game);
     }
     princessSettings.show();
 }
 
-function hideSettings(){
+function hideSettings() {
     var princessSettings = this.princessSettings;
     princessSettings.hide();
 }
@@ -444,7 +446,7 @@ function pause() {
         showSettings.call(this);
     }
 }
-function localCollides(event, sprite){
+function localCollides(event, sprite) {
     var x = event.x,
         y = event.y;
     return x >= sprite.x && x <= (sprite.x + sprite.width) && y >= sprite.y && y <= sprite.y + sprite.height;
@@ -452,16 +454,16 @@ function localCollides(event, sprite){
 function unpause(event) {
     var unpaused = false;
     if (this.game.paused) {
-        if(event){
+        if (event) {
             //Coming from clicking the pause button (sends events)
-            if(localCollides(event, pauseButton)){
+            if (localCollides(event, pauseButton)) {
                 unpaused = true;
             }
         } else {
             //Coming from ESC or any other event
             unpaused = true;
         }
-        if(unpaused){
+        if (unpaused) {
             this.game.paused = false;
             pauseButton.loadTexture(c.BUTTONS.PAUSE);
             hideSettings.call(this);
