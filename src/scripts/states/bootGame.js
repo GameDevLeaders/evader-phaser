@@ -3,12 +3,15 @@
 var cfg = require('../../../config'),
     Hand = require('../entities/hand'),
     SoundsManager = require('../sounds'),
+    PrincessCredits = require('../partials/credits.js'),
     c = require('../constants'),
     bootGame = function(game) {},
     timer = {},
     interval = {},
     background,
     speaker,
+    credits,
+    scrCredits,
     SM;
 
 bootGame.prototype = bootGameState();
@@ -25,7 +28,6 @@ function bootGameState() {
     }
 
     function create() {
-
         SM = new SoundsManager(this.game);
         SM.create();
         SM.play(SM.SOUNDS.MENU, true);
@@ -76,9 +78,15 @@ function bootGameState() {
         tweenHandHorizontalMove.start();
 
         speaker = this.game.add.sprite(this.game.world.width - 60, this.game.world.height - 60, c.SPRITES.SPEAKER_ON);
+        credits = this.game.add.sprite(0, this.game.world.height - 60, c.SPRITES.CREDITS);
     }
     function mouseClicked(event){
-        if(localCollides(event, speaker)){
+        if(localCollides(event, credits) || (scrCredits && scrCredits.isVisible())) {
+            if (!scrCredits) {
+                scrCredits = new PrincessCredits(this.game);
+            }
+            scrCredits.toggleVisible();
+        } else if(localCollides(event, speaker)){
             toggleSound("boot");
         } else {
             startGame.apply(this);

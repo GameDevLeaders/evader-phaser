@@ -2,31 +2,27 @@
 var c = require('../constants'),
     //close,
     fairy, text,
-    singleton = null,
     settingsWidth = 280, //TODO Move to constants
     settingsHeight = settingsWidth - 80;//TODO Move to constants
 function PrincessCredits(game){
-    if(singleton){
-        return singleton;
-    } else {
-        singleton = this;
-    }
     this.game = game;
     this._isVisible = false;
     this.setupFrames();
     //this.setupButtons();
     this.setupHada();
-    game.input.onDown.add(this.clickEvent, this);
+    //game.input.onDown.add(this.clickEvent, this);
     this.hide();
 }
 PrincessCredits.prototype.isVisible = function(){
     return this._isVisible;
 };
-
+function buildGraphics(game){
+    return game.add.graphics(0, 0);
+}
 PrincessCredits.prototype.setupFrames = function(){
     var game = this.game,
         x2, y2;
-    this.graphics = game.add.graphics(0, 0);
+    this.graphics = buildGraphics(game);
         var x = this.game.world.centerX - settingsWidth/2,
         y = this.game.world.centerY - settingsHeight/2 - 50;
 
@@ -74,11 +70,25 @@ PrincessCredits.prototype.hide = function(){
     }
     if(fairyInterval){
         clearInterval(fairyInterval);
+        fairyInterval = null;
     }
 };
 var fairyInterval;
+PrincessCredits.prototype.toggleVisible = function(){
+    if(this._isVisible){
+        this.hide();
+    } else {
+        this.show();
+    }
+}
 PrincessCredits.prototype.show = function(){
+    if(this._isVisible){
+        return this;
+    }
     this._isVisible = true;
+    if(!this.graphics){
+        this.graphics = buildGraphics(this.game);
+    }
     var graphics = this.graphics;
     graphics.beginFill(0xA1A188);
     graphics.drawPolygon(this.subBgBlack.points);
@@ -94,14 +104,20 @@ PrincessCredits.prototype.show = function(){
 
     var i = 0;
 
-    fairyInterval = setInterval(function(){
-        i++;
-        if(i>= fairy.animations._frameData._frames.length){
-            i = 0;
-        }
-        fairy._frame = fairy.animations.currentFrame = fairy.animations._frameData._frames[i];
-        fairy.frame = i;
-    }, 200);
+    if(fairyInterval){
+        clearInterval(fairyInterval);
+        fairyInterval = null;
+    }
+    if(this.game.paused && fairy.animations._frameData && fairy.animations._frameData._frames){
+        fairyInterval = setInterval(function(){
+            i++;
+            if(i>= fairy.animations._frameData._frames.length){
+                i = 0;
+            }
+            fairy._frame = fairy.animations.currentFrame = fairy.animations._frameData._frames[i];
+            fairy.frame = i;
+        }, 200);
+    }
 };
 
 PrincessCredits.prototype.setupHada = function(){
@@ -125,9 +141,9 @@ PrincessCredits.prototype.showText = function(){
     text = this.game.add.text(x, y, txtCredits.text, txtCredits.obj);
     //text.anchor.setTo(0.5, 0.5);
 };
-PrincessCredits.prototype.clickEvent = function(event){
-    this.hide();
-};
+//PrincessCredits.prototype.clickEvent = function(event){
+//    this.hide();
+//};
 //TODO: make this funct shared
 function localCollides(event, sprite){
     var x = event.x,
