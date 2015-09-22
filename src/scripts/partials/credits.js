@@ -61,19 +61,6 @@ PrincessCredits.prototype.setupFrames = function(){
     this.subBgBlack.setTo([ new Phaser.Point(x, y), new Phaser.Point(x + settingsWidth, y), new Phaser.Point(x + settingsWidth, y + settingsHeight), new Phaser.Point(x, y + settingsHeight) ]);
 };
 
-//PrincessCredits.prototype.setupButtons = function(){
-//    var game = this.game;
-//    close = game.add.sprite(0,0, c.SPRITES.CLOSE);
-//    close.scale.set(0.5, 0.5);
-//    game.physics.arcade.enable(close);
-//    close.body.velocity.y = 0;
-//    close.inputEnabled = true;
-//    close.input.useHandCursor = true;
-//    close.events.onInputDown.add(this.hide, this);
-//    //Upper right corner
-//    close.x = this.x2 - close.width/2 - 10;
-//    close.y = this.y2 - close.height/2 + 10;
-//};
 PrincessCredits.prototype.hide = function(){
     this._isVisible = false;
     this.graphics.clear();
@@ -85,19 +72,14 @@ PrincessCredits.prototype.hide = function(){
     if(text){
         text.destroy();
     }
+    if(fairyInterval){
+        clearInterval(fairyInterval);
+    }
 };
+var fairyInterval;
 PrincessCredits.prototype.show = function(){
     this._isVisible = true;
     var graphics = this.graphics;
-    //Drawing some frames
-    //graphics.beginFill(0xC3C39F);
-    //graphics.drawPolygon(this.bgFrame.points);
-    //graphics.endFill();
-
-    //graphics.beginFill(0xFFFFFF);
-    //graphics.drawPolygon(this.bg.points);
-    //graphics.endFill();
-
     graphics.beginFill(0xA1A188);
     graphics.drawPolygon(this.subBgBlack.points);
     graphics.endFill();
@@ -109,6 +91,17 @@ PrincessCredits.prototype.show = function(){
     this.showText();
     //close.visible = true;
     fairy.visible = true;
+
+    var i = 0;
+
+    fairyInterval = setInterval(function(){
+        i++;
+        if(i>= fairy.animations._frameData._frames.length){
+            i = 0;
+        }
+        fairy._frame = fairy.animations.currentFrame = fairy.animations._frameData._frames[i];
+        fairy.frame = i;
+    }, 200);
 };
 
 PrincessCredits.prototype.setupHada = function(){
@@ -122,13 +115,6 @@ PrincessCredits.prototype.setupHada = function(){
     fairy.animations.add('animate');
     fairy.animations.play('animate', 2, true, false);
 };
-//this, 'bg-woods', 16.5, this.game.world.centerX - 150, this.game.world.centerY/2 + 35, c.SPRITES.HADA, 2, true
-//function addFrame (that, bgimage, timeOnStage, spriteX, spriteY, sprites, framerate, loop) {
-//    background = that.game.add.sprite(that.game.world.centerX - 200, that.game.world.centerY/2, bgimage);
-//    characters = that.game.add.sprite(spriteX, spriteY, sprites);
-//    characters.animations.add('animate');
-//    characters.animations.play('animate', framerate, loop, false);
-//}
 var txtCredits = {
     text: c.TEXT.CREDITS, // TODO: Move to constants
     obj: { font: "17px Arial", fill: "#080808", align: "left" }
@@ -140,9 +126,7 @@ PrincessCredits.prototype.showText = function(){
     //text.anchor.setTo(0.5, 0.5);
 };
 PrincessCredits.prototype.clickEvent = function(event){
-    //if(localCollides(event, close)){
-        this.hide();
-    //}
+    this.hide();
 };
 //TODO: make this funct shared
 function localCollides(event, sprite){

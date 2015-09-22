@@ -4,7 +4,6 @@ var SoundsManager = require('../sounds.js');
 var PrincessCredits = require('../partials/credits.js');
 
 var SM,
-    close,
     restart,
     speaker,
     sprCredits,
@@ -67,7 +66,6 @@ PrincessSettings.prototype.setupFrames = function(){
 PrincessSettings.prototype.hide = function(){
     this.graphics.clear();
     //Maybe add to group?
-    close.visible = false;
     restart.visible = false;
     speaker.visible = false;
     sprCredits.visible = false;
@@ -95,7 +93,6 @@ PrincessSettings.prototype.show = function(){
     graphics.endFill();
 
 
-    close.visible = true;
     restart.visible = true;
     speaker.visible = true;
     sprCredits.visible = true;
@@ -104,40 +101,28 @@ PrincessSettings.prototype.setupButtons = function(){
     var game = this.game,
         areSoundsOn = SM.isActive(),
         curX, curY, iconsMargin = 15, iconsPadding = 40;
-    close = game.add.sprite(0,0, c.SPRITES.CLOSE);
-    close.scale.set(0.4, 0.4);
     restart = game.add.sprite(0,0, c.SPRITES.RESTART);
     speaker = game.add.sprite(0,0, areSoundsOn ? c.SPRITES.SPEAKER_ON:c.SPRITES.SPEAKER_OFF);
     sprCredits = game.add.sprite(0,0, c.SPRITES.CREDITS);
 
-    game.physics.arcade.enable(close);
     game.physics.arcade.enable(restart);
     game.physics.arcade.enable(speaker);
     game.physics.arcade.enable(sprCredits);
 
-    close.body.velocity.y = 0;
     restart.body.velocity.y = 0;
     speaker.body.velocity.y = 0;
     sprCredits.body.velocity.y = 0;
 
-    close.inputEnabled = true;
     restart.inputEnabled = true;
     speaker.inputEnabled = true;
     sprCredits.inputEnabled = true;
 
-    close.input.useHandCursor = true;
     restart.input.useHandCursor = true;
     speaker.input.useHandCursor = true;
     sprCredits.input.useHandCursor = true;
 
-    close.events.onInputDown.add(this.hide, this);
     restart.events.onInputDown.add(this.restart, this);
     speaker.events.onInputDown.add(this.toggleSound, this);
-
-
-    //Upper right corner
-    close.x = this.x2 - close.width/2 - 10;
-    close.y = this.y2 - close.height/2 + 10;
 
     //Left aligned around middle
     //restart.x = this.x + 20;
@@ -181,9 +166,7 @@ PrincessSettings.prototype.clickEvent = function(event){
     if(scrCredits.isVisible()){
         scrCredits.hide();
     }
-    if(localCollides(event, close)){
-        this.hide();
-    } else if(localCollides(event, speaker)){
+    if(localCollides(event, speaker)){
         this.toggleSound("play");
     } else if(localCollides(event, restart)){
         this.restart();
