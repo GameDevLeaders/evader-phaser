@@ -7,6 +7,8 @@ var Princess = require('../prefabs/princess');
 var Enemy = require('../prefabs/enemy');
 var World = require('../prefabs/world');
 var Window = require('../prefabs/window');
+var Cheese = require('../prefabs/cheese');
+var RottenCheese = require('../prefabs/rottenCheese');
 
 var Play = module.exports = function () {
     Phaser.State.call(this);
@@ -27,6 +29,9 @@ var fuelBar;
 var cropRect;
 var fuelMaxW;
 var enemyCreationTimer;
+var cheese;
+var rottenCheese;
+var rottenCheeseTimer;
 
 Play.prototype.create = function () {
     var game = this.game;
@@ -86,6 +91,16 @@ Play.prototype.create = function () {
 
     enemyGroup = game.add.group();
     enemyCreationTimer = game.time.events.loop(c.ENEMY_SPAWN_DELAY, this.createEnemies, this);
+
+    // cheeses
+
+    cheese = new Cheese(game);
+
+    rottenCheese = new RottenCheese(game);
+    rottenCheeseTimer = game.time.create();
+    rottenCheeseTimer.add(c.ROTTEN_CHEESE_RESPAWN_TIMEOUT, function () {
+        this.reSpawn();
+    }, rottenCheese);
 };
 
 Play.prototype.update = function () {
@@ -96,6 +111,7 @@ Play.prototype.update = function () {
     castleBg.tilePosition.y += this.game._world.velocity / 120;
 
     windowBg.update();
+    cheese.update();
 
     // controls
 
@@ -114,6 +130,16 @@ Play.prototype.update = function () {
     }
 
     // game control
+
+    this.physics.arcade.overlap(princess, cheese, function (self, cheese) {
+        cheese.kill();
+        self.addFuel(c.CHEESE_FUEL);
+    }, null, this);
+
+    this.physics.arcade.overlap(princess, rottenCheese, function (self, rottenCheese) {
+        rottenCheese.kill();
+        self.addFuel(-c.CHEESE_FUEL);
+    }, null, this);
 
     this.physics.arcade.overlap(princess, enemyGroup, function (self, enemy) {
         if (!self._isGhost) {

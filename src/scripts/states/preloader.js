@@ -18,6 +18,8 @@ Preloader.prototype.preload = function () {
     load.image('bg-castle', 'castle.png');
     load.image('fuel_container', 'fuelbar.png');
     load.image('fuel', 'fuelbar-fill.png');
+    load.image('cheese', 'cheese.png');
+    load.image('rotten-cheese', 'rottencheese.png');
     load.spritesheet('bg-window', 'window.png', c.WINDOW_WIDTH, c.WINDOW_HEIGHT, c.WINDOW_SPRITES);
     load.spritesheet('princess', 'princess.png', c.PRINCESS_WIDTH, c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
     load.spritesheet('lumberjack', 'lumberjack.png', c.LUMBERJACK_WIDTH, c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);

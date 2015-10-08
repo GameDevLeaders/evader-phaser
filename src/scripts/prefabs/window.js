@@ -20,7 +20,7 @@ var Window = module.exports = function Window(gameInstance, x, y) {
     this.checkWorldBounds = true;
 
     this.events.onOutOfBounds.add(function () {
-        if (this.alive && this.position.y > this.game.height) {
+        if (this.position.y > this.game.height) {
             this.reset(this.position.x, -c.WINDOW_HEIGHT);
             this.reloadFrame();
         }

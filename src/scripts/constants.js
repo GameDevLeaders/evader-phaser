@@ -18,10 +18,14 @@ module.exports = {
     CONSUME_FUEL_DELAY      :  300,
     SLIDE_DISTANCE          :   20,
     TURBO_DELAY             : 1000,
-    CHEESE_FUEL             :   15,
     ENEMY_FUEL              :  -30,
     GHOST_TIME              : 1000,
     ENEMY_SPAWN_DELAY       : 2000,
+
+    /***** cheese, cheese, cheese!! *****/
+    CHEESE_FUEL                     :   15,
+    CHEESE_RESPAWN_TIMEOUT          : 3000, // miliseconds
+    ROTTEN_CHEESE_RESPAWN_TIMEOUT   : 5000, // miliseconds
 
     /***** backgrounds sprites *****/
     CASTLE_WIDTH            :  320,
@@ -90,6 +94,7 @@ module.exports = {
         INTRO: "intro",
         MENU: "menu"
     },
+
     SPRITES: {
         WINDOWS: [
             'sprites.window.1',
@@ -104,17 +109,21 @@ module.exports = {
         CREDITS: "sprites.settings.credits",
         HADA: 'hada'
     },
+
     BUTTONS: {
         PAUSE: "buttons.pauseButton",
         SETTINGS: "buttons.settings"
     },
+
     SPEED:{
         TILE: 0.2
     },
+
     STATES: {
         play: 'play',
         gameOver: 'gameOver'
     },
+
     TEXT: {
         CREDITS: "- Informal Penguins -" +
         "\n" +
