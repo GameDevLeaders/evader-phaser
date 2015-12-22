@@ -24,12 +24,12 @@ function gameOverState() {
     }
 
     function init(state) {
-        this.score = state.score;
-        HighScore.setIfHighScore(this.game._my_world.score);
+        this.score = this.game._world.score;
+        HighScore.setIfHighScore(this.score);
     }
 
     function create() {
-        var scoreText = "Your score: " + this.game._my_world.score;
+        var scoreText = "Your score: " + this.score;
         var highScoreText = "Highest score: " + HighScore.get();
 
         background = this.game.add.tileSprite(0, 0, this.game.stage.width, this.game.cache.getImage('sky').height, 'sky');
@@ -81,7 +81,7 @@ function gameOverState() {
     function shareOnFb() {
         var url = 'https://www.facebook.com/dialog/feed?';
         var app_id = cfg.app_id;
-        var caption = 'I just scored ' + this.game._my_world.score + '!';
+        var caption = 'I just scored ' + this.score + '!';
         var link = cfg.canonical_url;
 
         var params = 'app_id=' + app_id +
@@ -95,7 +95,7 @@ function gameOverState() {
 
     function shareOnTw() {
         var url = 'http://twitter.com/home?';
-        var status = 'I scored ' + this.game._my_world.score + ' at #rocketPrincess - ' + cfg.canonical_url;
+        var status = 'I scored ' + this.score + ' at #rocketPrincess - ' + cfg.canonical_url;
 
         var params = 'status=' + encodeURIComponent(status);
 

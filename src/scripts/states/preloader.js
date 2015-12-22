@@ -66,40 +66,25 @@ Preloader.prototype.preload = function () {
      * Assets for play.js
      */
 
-    load.image('compass', 'nothing.png');
-    load.image('touch_segment', 'nothing.png');
-    load.image('touch', 'nothing.png');
-    load.image('princess_center', 'sprites/princess-back.png');
-    load.image('princess_left', 'sprites/princess-side.png');
-    load.image('fuel_container', 'sprites/fuelbar.png');
-    load.image('fuel', 'sprites/fuelbar-fill.png');
-    load.image('background', 'sprites/castle-texture.png');
-    load.image('clouds', 'sprites/sky.png');
-    load.image('creeperL', 'sprites/enredadera-izq.png');
-    load.image('creeperR', 'sprites/enredadera-der.png');
     load.image('fire1', 'fire1.png');
     load.image('fire2', 'fire2.png');
     load.image('fire3', 'fire3.png');
-    load.image('window1', 'sprites/window-1.png');
-    load.image('window2', 'sprites/window-2.png');
-    load.image('window3', 'sprites/window-3.png');
-    load.image('window4', 'sprites/window-4.png');
     load.image('smoke', 'smoke-puff.png');
-    for(var i = 0, windowsSprites = c.SPRITES.WINDOWS, len = windowsSprites.length; i<len;i++){
-        load.image(windowsSprites[i], 'sprites/window-' + ( i+1 )+ '.png'); //window-<1|4>.png
-        // flojo XD
-    }
-
-    load.image('cheese', 'sprites/cheese.png');
-    load.image('rotten-cheese', 'sprites/rottencheese.png');
-    load.image(c.BUTTONS.PAUSE, 'button_pause.png');
-    load.image('playButton', 'button_play.png');
+    load.image('pause_button', 'button_pause.png');
+    load.image('play_button', 'button_play.png');
     load.image('fbButton', 'button_fb.png');
     load.image('twButton', 'button_tw.png');
     load.image('retryButton', 'button_retry.png');
-    load.spritesheet('princess', 'sprites/princess.png', c.PRINCESS_WIDTH, c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
-    load.spritesheet('lumberjack', 'sprites/lumberjack-s.png', c.LUMBERJACK_WIDTH, c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);
-    load.spritesheet('wolf', 'sprites/wolf.png', c.WOLF_WIDTH, c.WOLF_HEIGHT, c.WOLF_SPRITES);
+    load.image('bg-sky', 'sky.png');
+    load.image('bg-castle-complete', 'castle.png');
+    load.image('fuel_container', 'fuelbar.png');
+    load.image('fuel', 'fuelbar-fill.png');
+    load.image('cheese', 'cheese.png');
+    load.image('rotten-cheese', 'rottencheese.png');
+    load.spritesheet('bg-window', 'window.png', c.WINDOW_WIDTH, c.WINDOW_HEIGHT, c.WINDOW_SPRITES);
+    load.spritesheet('princess', 'princess.png', c.PRINCESS_WIDTH, c.PRINCESS_HEIGHT, c.PRINCESS_SPRITES);
+    load.spritesheet('lumberjack', 'lumberjack.png', c.LUMBERJACK_WIDTH, c.LUMBERJACK_HEIGHT, c.LUMBERJACK_SPRITES);
+    load.spritesheet('wolf', 'wolf.png', c.WOLF_WIDTH, c.WOLF_HEIGHT, c.WOLF_SPRITES);
 
     /* Settings assets */
     load.image(c.SPRITES.SPEAKER_ON, 'sprites/speaker-on.png');
@@ -113,5 +98,6 @@ Preloader.prototype.preload = function () {
 };
 
 Preloader.prototype.create = function () {
-    this.game.state.start('company');
+    //this.game.state.start('company'); // TODO CHANGE THIS
+    this.game.state.start('play');
 };

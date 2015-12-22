@@ -1,5 +1,6 @@
 'use strict';
 
+var c = require('../constants');
 var generator = require('./worldGenerator');
 var initialDoors = 3;
 var currentLine;
@@ -9,7 +10,8 @@ var doors;
 
 var World = function (props) {
     this.score = 0;
-    this.velocity = 50;
+    this.velocity = 100;
+    this.turbo = false;
     initialVelocity = this.velocity;
 
     lineSize = props.lineSize || 5;
@@ -29,11 +31,24 @@ World.prototype.update = function update() {
     /***** Generate new line *****/
     currentLine = generator.generateLine(lineSize, doors);
     /***** Adjust velocity *****/
-    this.velocity = initialVelocity + Math.floor(this.score / 5) * 20;
+    this.setVelocity();
+
+};
+
+World.prototype.setVelocity = function setVelocity() {
+    if (!this.turbo) {
+        this.velocity = this.velocity >= c.MAX_VELOCITY ? c.MAX_VELOCITY : initialVelocity + Math.floor(this.score / 5) * 20;
+    }
 };
 
 World.prototype.getLine = function getLine() {
     return currentLine;
+};
+
+World.prototype.addScore = function addScore(points) {
+    if (typeof points === 'number') {
+        this.score += points;
+    }
 };
 
 module.exports = World;
