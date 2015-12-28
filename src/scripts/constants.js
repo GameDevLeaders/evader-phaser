@@ -9,6 +9,8 @@ module.exports = {
     LEFT    : 4, // 100
     CENTER  : 2, // 010
     RIGHT   : 1, // 001
+    DOWN    : 8,
+    UP      : 16,
 
     /***** player *****/
     MAX_VELOCITY            :  800,
@@ -20,11 +22,11 @@ module.exports = {
     TURBO_DELAY             : 1000,
     ENEMY_FUEL              :  -30,
     GHOST_TIME              : 1000,
-    ENEMY_SPAWN_DELAY       : 2000,
+    ENEMY_SPAWN_DELAY       : 500,
 
     /***** cheese, cheese, cheese!! *****/
     CHEESE_FUEL                     :   15,
-    CHEESE_RESPAWN_TIMEOUT          : 3000, // miliseconds
+    CHEESE_RESPAWN_TIMEOUT          : 1500, // miliseconds
     ROTTEN_CHEESE_RESPAWN_TIMEOUT   : 5000, // miliseconds
 
     /***** backgrounds sprites *****/

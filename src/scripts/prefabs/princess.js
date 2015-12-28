@@ -59,19 +59,35 @@ Princess.prototype.constructor = Princess;
  * #move
  */
 
-Princess.prototype.move = function move(direction) {
+Princess.prototype.move = function move(up, down, left, right) {
     var data = this._data;
 
-    data.facing = direction;
+    //data.facing = direction;
+    if(up) {
+        this.body.velocity.y = -c.VELOCITY;
+        this.restoreFacing();
+    }
+    else if(down) {
+        this.body.velocity.y = c.VELOCITY;
+        this.restoreFacing();
+    }
 
-    if (c.LEFT === direction) {
+    if(left) {
         this.body.velocity.x = -c.VELOCITY;
         this.restoreFacing();
-    } else if (c.RIGHT === direction) {
+    }
+    else if(right) {
         this.body.velocity.x = c.VELOCITY;
         this.restoreFacing();
-    } else {
-        this.body.velocity.x = 0;
+    }
+
+    if(!(up || down))
+    {
+        this.body.velocity.y *= 0.7;
+    }
+    if(!(left || right))
+    {
+        this.body.velocity.x *= 0.7;
     }
 
     return this;
@@ -194,7 +210,7 @@ Princess.prototype.damage = function () {
  */
 
 Princess.prototype.consumeFuel = function consumeFuel(value) {
-    this._data.fuel += value || -1;
+    this._data.fuel += value || -0.5;
 };
 
 /*

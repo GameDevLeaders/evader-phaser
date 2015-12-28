@@ -11,6 +11,7 @@ var Window = require('../prefabs/window');
 var Cheese = require('../prefabs/cheese');
 var RottenCheese = require('../prefabs/rottenCheese');
 var PrincessSettings = require('../partials/princess_settings');
+var utils = require('../utils');
 
 var Play = module.exports = function () {
     Phaser.State.call(this);
@@ -22,6 +23,7 @@ Play.prototype.constructor = Play;
 var princess;
 var bgSky;
 var cursors;
+var turboButton;
 var enemyGroup;
 var enemiesPerLine;
 var castleBg;
@@ -101,6 +103,7 @@ Play.prototype.create = function () {
     princess = new Princess(game, game.world.centerX, game.height - c.PRINCESS_HEIGHT, 0);
 
     cursors = game.input.keyboard.createCursorKeys();
+    turboButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
     // enemies
 
@@ -122,6 +125,7 @@ Play.prototype.update = function () {
     // bg
 
     bgSky.tilePosition.y += this.game._world.velocity / 200;
+    bgSky.tilePosition.x += 0.1;
 
     castleBg.tilePosition.y += this.game._world.velocity / 120;
 
@@ -129,23 +133,12 @@ Play.prototype.update = function () {
     cheese.update();
 
     // controls
-
-    if (cursors.up.isDown) {
+    princess.move(cursors.up.isDown, cursors.down.isDown, cursors.left.isDown, cursors.right.isDown);
+    if (turboButton.isDown) {
         princess.faster();
-    } else if (cursors.down.isDown) {
-        princess.slower();
-    }
-
-    if (cursors.left.isDown) {
-        princess.move(c.LEFT);
-    } else if (cursors.right.isDown) {
-        princess.move(c.RIGHT);
-    } else {
-        princess.move();
     }
 
     // game control
-
     this.physics.arcade.overlap(princess, cheese, function (self, cheese) {
         cheese.kill();
         self.addFuel(c.CHEESE_FUEL);
@@ -169,21 +162,16 @@ Play.prototype.update = function () {
     fuelBar.updateCrop();
 
     // enemies
-
     enemyGroup.forEach(function (enemy) {
         enemy.update();
     });
 
-    // scoring
-
-    // enemy creating delay follows the equation X = Y * 0.5 + 200 / Y * 1200 where Y is the world's velocity
-    enemyCreationTimer.delay = this.game._world.velocity * 0.5 + 200 / this.game._world.velocity * 1200;
+    enemyCreationTimer.delay = c.ENEMY_SPAWN_DELAY - this.game._world.velocity / 100;
 
     this.game._world.setVelocity();
     this.scoreText.text = this.game._world.score;
 
     // debug
-
     if (this.game._debug) {
         console.log('enemies created: ', enemyGroup.length);
     }
@@ -191,25 +179,17 @@ Play.prototype.update = function () {
 
 Play.prototype.createEnemies = function () {
     var game = this.game,
-        line = this.game._world.getLine(),
         enemy; //the enemy (Sprite) to be added.
 
-    for (var i = 0; i < line.length; i++) {
-        if (line[i] === 0) {
-            continue;
-        }
+    enemy = enemyGroup.getFirstExists(false);
 
-        enemy = enemyGroup.getFirstExists(false);
-
-        if (!enemy) {
-            enemy = new Enemy(game);
-            enemyGroup.add(enemy);
-        }
-
-        enemy.revive();
-        enemy.reset(i * 140 + 40, -150);
+    if (!enemy) {
+        enemy = new Enemy(game);
+        enemyGroup.add(enemy);
     }
 
+    enemy.revive();
+    enemy.reset(utils.getRandomIntInclusive(0, game.width), -150);
     this.game._world.update();
 };
 
